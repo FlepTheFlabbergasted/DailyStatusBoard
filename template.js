@@ -1,18 +1,47 @@
 
+var data = [{
+  x: [1999, 2000, 2001, 2002],
+  y: [10, 15, 13, 17],
+  type: 'histogram'
+}];
+
+
+// Class to hold a data point for the histogram
+class ChartData {
+	constructor(plus, minus, date) {
+    console.log("Creating a ChartData class");
+   	this.plus = plus;
+		this.minus = minus; 
+		this.date = date;
+		//week = 0 // TODO fuction
+  }
+
+  print() {
+  	console.log("Plus: " + this.plus + " Minus: " + this.minus + " Date: " + this.date);
+  }
+}
+
 class Histogram {
   constructor() {
     console.log("Creating a new histogram");
-    var values = [];
+    this.chartData = new ChartData(1, 2, new Date().toISOString().substring(0, 10));
   }
 
   update() {
     console.log("Here is where I would update the chart");
+    // new Date().toISOString().substring(0, 10), // YYYY-MM-DD
+    this.chartData.print();
+    console.log("x: " + x);
+
+    x.push(14);
+
+    Plotly.redraw('histogram-div');
   }
 }
 
 
 
-let histogram = new Histogram();
+var histogram = new Histogram();
 
 $(document).ready(function() {
 
@@ -27,17 +56,25 @@ $(document).ready(function() {
 	// console.log( Plotly.BUILD );
 
 
-	var x = [];
-	for (var i = 0; i < 500; i ++) {
-		x[i] = Math.random();
-	}
+	var layout = {
+	  title: 'Daily Status',
+	  xaxis: {
+	    title: 'Day',
+	    showgrid: false,
+	    zeroline: false
+	  },
+	  yaxis: {
+	    title: '',
+	    showline: false
+	  }
+	};
 
-	var trace = {
-	    x: x,
-	    type: 'histogram',
-	  };
-	var data = [trace];
-	Plotly.newPlot('tester', data);
+	// var trace = {
+	//     x: x,
+	//     type: 'histogram',
+	//   };
+	// var data = [trace];
+	Plotly.newPlot('histogram-div', data, layout);
 
 });
 
@@ -55,7 +92,6 @@ function commitData() {
 
 // When user presses "commit" update the histogram with added data
 // Save the array with data to file/in Chrome
-
 
 
 // Add post it notes...
