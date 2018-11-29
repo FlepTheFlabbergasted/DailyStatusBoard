@@ -1,4 +1,19 @@
 
+class Histogram {
+  constructor() {
+    console.log("Creating a new histogram");
+    var values = [];
+  }
+
+  update() {
+    console.log("Here is where I would update the chart");
+  }
+}
+
+
+
+let histogram = new Histogram();
+
 $(document).ready(function() {
 
 	// TESTER = document.getElementById('tester');
@@ -26,7 +41,13 @@ $(document).ready(function() {
 
 });
 
-
+function commitData() {
+	//Get
+	var plus = $('#plus-input').val();
+	var minus = $('#minus-input').val();
+	console.log("Plus: " + plus + " Minus: " + minus);
+	histogram.update();
+}
 
 // Take user input for histogram and append to array/list
 // Data consists of nr of + and - as well as date 
