@@ -135,6 +135,9 @@ class ChartHandler {
 		} else if(nrPlus == 0 && nrMinus == 0) {
 			DEBUG_LOG('No valid input data (nrPlus: 0, nrMinus: 0), returning');
 			return;
+		} else if(nrPlus < 0 || nrMinus < 0) {
+			DEBUG_LOG('No valid input data (nrPlus < 0 or nrMinus < 0), returning');
+			return;
 		}
 
 		// Only show the latest data inputs
