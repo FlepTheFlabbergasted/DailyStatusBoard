@@ -16,8 +16,8 @@ html, body {
 	padding: 0;
 	margin: 0;
 	font-size: 18px;
-    line-height: 1.6em;
-    color: #3A4145;
+	line-height: 1.6em;
+	color: #3A4145;
 	font-family: 'Fira Sans', sans-serif;
 }
 
@@ -26,4 +26,16 @@ html, body {
 	float: left;
 	width: 49vw;
 	height: 95%; /* 100% and you can't see the underneath controls for the chart */
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* TODO: Add space between buttons and input */
+.center {
+  display: flex;
+  justify-content: center;
 }

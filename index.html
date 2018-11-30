@@ -23,10 +23,15 @@
 <body>
 	<div id="chartContainer">
 		<canvas id="canvas"></canvas>
-		<input type="number" id="plusInput" value="0"/>
-		<input type="number" id="minusInput" value="0"/>
-		<button id="commitData">Commit Data</button>
-		<button id="addRandomData">Add Random Data</button>
+		<div class="center">
+			<input type="number" id="plusInput" value="0"/>
+			<button id="plusButton">+</button>
+			<input type="number" id="minusInput" value="0"/>
+			<button id="minusButton">-</button>
+
+			<button id="commitData">Commit Data</button>
+			<button id="addRandomData">Add Random Data</button>
+		</div>
 	</div>
 
 	<div id="postitContainer" ondrop="drop(event)" ondragover="drag_over(event)">

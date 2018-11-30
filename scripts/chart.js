@@ -220,7 +220,17 @@ $(document).ready(function() {
 		window.chartHandler.addData(plus, minus);
 	}); // commitData
 
+	document.getElementById('plusButton').addEventListener('click', function() {
+		let nrPlus = $('#plusInput').val();
+		nrPlus++;
+		$('#plusInput').val(nrPlus);
+	});
 
+	document.getElementById('minusButton').addEventListener('click', function() {
+		let nrMinus = $('#minusInput').val();
+		nrMinus++;
+		$('#minusInput').val(nrMinus);
+	});
 	// document.getElementById('randomizeData').addEventListener('click', function() {
 	// 	console.log('[INFO] Entering function randomizeData');
 	// 	var zero = Math.random() < 0.2 ? true : false;
