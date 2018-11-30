@@ -18,7 +18,7 @@ function random(){
 const DEBUG = true;
 function DEBUG_LOG(string) {
 	if(DEBUG == true) {
-		console.log('[DEBUG]' + string);
+		console.log('[DEBUG] ' + string);
 	}
 }
 
@@ -27,6 +27,9 @@ const MAX_DATA_LENGTH = 8;
 const PLUS_DATASET = 0;
 const MINUS_DATASET = 1;
 const WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+// TODO: Remove once figured out stuff in options
+const Y_AXES_TICKS_MIN = -8;
+const Y_AXES_TICKS_MAX = 8;
 
 // Number to iterate through the WEEKDAYS array
 var WEEKDAY_NR = 0;
@@ -98,8 +101,9 @@ class ChartHandler {
 					yAxes: [{
 						stacked: true,
 						ticks: {
-              suggestedMin: -8,
-              suggestedMax: 8,
+							// TODO: Using const vars since I can't figure out how to access these options
+              min: Y_AXES_TICKS_MIN,
+              max: Y_AXES_TICKS_MAX,
             }
 					}]
 				}
@@ -111,32 +115,32 @@ class ChartHandler {
 		this.chart.update();
 	}
 
-} // class ChartHandler
+	addData(nrPlus, nrMinus) {
+		console.log('[INFO] ##### Entering ChartHandler::addData #####');
+		DEBUG_LOG("User input, Plus: " + nrPlus + " nrMinus: " + nrMinus);
 
-window.onload = function() {
-	// Create new ChartHandler to control the chart, all further operations will be 
-	// called using 'window.chartHandler'
-	window.chartHandler = new ChartHandler();
-}; // window.onload
+		// Minor fault handling
+		if(nrPlus  < Y_AXES_TICKS_MIN ||
+			 nrPlus  > Y_AXES_TICKS_MAX ||
+			 nrMinus < Y_AXES_TICKS_MIN ||
+			 nrMinus > Y_AXES_TICKS_MAX) {
+			// TODO: Uuhhh?
+			DEBUG_LOG('You are trying to add a value outside the set range (min: ' + Y_AXES_TICKS_MIN + ', max: ' + Y_AXES_TICKS_MAX + ')');
+		}
 
-function commitData() {
-	console.log('[INFO] Entering function commitData');
-
-	var plus = $('#plus-input').val();
-	var minus = $('#minus-input').val();
-	console.log("Plus: " + plus + " Minus: " + minus);
-	histogram.update();
-}
-
-$(document).ready(function() {
-
-	document.getElementById('addData').addEventListener('click', function() {
-		console.log('[INFO] ##### Entering function addData #####');
+		// We must have any valid data for input to the graph
+		if(!nrPlus || !nrMinus) { // Javascript "truthy"
+			DEBUG_LOG('No valid input data, returning');
+			return;
+		} else if(nrPlus == 0 && nrMinus == 0) {
+			DEBUG_LOG('No valid input data (nrPlus: 0, nrMinus: 0), returning');
+			return;
+		}
 
 		// Only show the latest data inputs
 		// Only need to check one dataset since they should both be the same length
 		if(chartData.datasets[PLUS_DATASET].data.length >= MAX_DATA_LENGTH) {
-			DEBUG_LOG('Dataset data is longer than MAX_DATA_LENGTH ( ' + MAX_DATA_LENGTH + '), removing first datapoint');
+			DEBUG_LOG('Dataset data is longer than MAX_DATA_LENGTH (' + MAX_DATA_LENGTH + '), removing first datapoint');
 			// Remove the label first
 			chartData.labels.shift();
 			// Remove the first data point
@@ -148,74 +152,124 @@ $(document).ready(function() {
 		if(WEEKDAY_NR == (WEEKDAYS.length)) {
 			WEEKDAY_NR = 0;
 		}
-		chartData.labels.push(day);
 
 		DEBUG_LOG('Current labels: ' + chartData.labels);
 		DEBUG_LOG('Weekday to add: ' + day);
 		DEBUG_LOG('Plus dataset  before additional data: ' + chartData.datasets[PLUS_DATASET].data);
 		DEBUG_LOG('Minus dataset before additional data: ' + chartData.datasets[MINUS_DATASET].data);
-
+		
+		// Add label
+		chartData.labels.push(day);
 		// Add data to dataset
-		// TODO: Take input from user instead of random data
+		chartData.datasets[PLUS_DATASET].data.push(nrPlus);
+		chartData.datasets[MINUS_DATASET].data.push(nrMinus * -1);
+
+		this.update();
+	}
+
+} // class ChartHandler
+
+window.onload = function() {
+	// Create new ChartHandler to control the chart, all further operations will be 
+	// called using 'window.chartHandler'
+	window.chartHandler = new ChartHandler();
+}; // window.onload
+
+$(document).ready(function() {
+
+	document.getElementById('addRandomData').addEventListener('click', function() {
+		console.log('[INFO] ##### Entering function addRandomData #####');
+
+		// Only show the latest data inputs
+		// Only need to check one dataset since they should both be the same length
+		if(chartData.datasets[PLUS_DATASET].data.length >= MAX_DATA_LENGTH) {
+			DEBUG_LOG('Dataset data is longer than MAX_DATA_LENGTH (' + MAX_DATA_LENGTH + '), removing first datapoint');
+			// Remove the label first
+			chartData.labels.shift();
+			// Remove the first data point
+			chartData.datasets[PLUS_DATASET].data.shift();
+			chartData.datasets[MINUS_DATASET].data.shift();
+		}
+
+		let day = WEEKDAYS[WEEKDAY_NR++];
+		if(WEEKDAY_NR == (WEEKDAYS.length)) {
+			WEEKDAY_NR = 0;
+		}
+		
+		DEBUG_LOG('Current labels: ' + chartData.labels);
+		DEBUG_LOG('Weekday to add: ' + day);
+		DEBUG_LOG('Plus dataset  before additional data: ' + chartData.datasets[PLUS_DATASET].data);
+		DEBUG_LOG('Minus dataset before additional data: ' + chartData.datasets[MINUS_DATASET].data);
+
+		// Add label
+		chartData.labels.push(day);
+		// Add random data to dataset
 		chartData.datasets[PLUS_DATASET].data.push(random());
 		chartData.datasets[MINUS_DATASET].data.push(random());
 
 		window.chartHandler.update();
-	});
+	}); // addData
+
+	document.getElementById('commitData').addEventListener('click', function() {
+		console.log('[INFO] ##### Entering function commitData #####');
+
+		let plus = $('#plusInput').val();
+		let minus = $('#minusInput').val();
+		window.chartHandler.addData(plus, minus);
+	}); // commitData
 
 
+	// document.getElementById('randomizeData').addEventListener('click', function() {
+	// 	console.log('[INFO] Entering function randomizeData');
+	// 	var zero = Math.random() < 0.2 ? true : false;
+	// 	chartData.datasets.forEach(function(dataset) {
+	// 		dataset.data = dataset.data.map(function() {
+	// 			return zero ? 0.0 : random();
+	// 		});
 
-	document.getElementById('randomizeData').addEventListener('click', function() {
-		console.log('[INFO] Entering function randomizeData');
-		var zero = Math.random() < 0.2 ? true : false;
-		chartData.datasets.forEach(function(dataset) {
-			dataset.data = dataset.data.map(function() {
-				return zero ? 0.0 : random();
-			});
+	// 	});
+	// 	window.chart.update();
+	// });
 
-		});
-		window.chart.update();
-	});
+	// // var colorNames = Object.keys(window.chartColors);
+	// document.getElementById('addDataset').addEventListener('click', function() {
+	// 	console.log('[INFO] Entering function addDataset');
 
-	// var colorNames = Object.keys(window.chartColors);
-	document.getElementById('addDataset').addEventListener('click', function() {
-		console.log('[INFO] Entering function addDataset');
+	// 	// var colorName = colorNames[chartData.datasets.length % colorNames.length];
+	// 	// var dsColor = window.chartColors[colorName];
+	// 	var newDataset = {
+	// 		label: 'Dataset ' + (chartData.datasets.length + 1),
+	// 		// backgroundColor: color(dsColor).alpha(0.5).rgbString(),
+	// 		// borderColor: dsColor,
+	// 		borderWidth: 1,
+	// 		data: []
+	// 	};
 
-		// var colorName = colorNames[chartData.datasets.length % colorNames.length];
-		// var dsColor = window.chartColors[colorName];
-		var newDataset = {
-			label: 'Dataset ' + (chartData.datasets.length + 1),
-			// backgroundColor: color(dsColor).alpha(0.5).rgbString(),
-			// borderColor: dsColor,
-			borderWidth: 1,
-			data: []
-		};
+	// 	for (var index = 0; index < chartData.labels.length; ++index) {
+	// 		newDataset.data.push(random());
+	// 	}
 
-		for (var index = 0; index < chartData.labels.length; ++index) {
-			newDataset.data.push(random());
-		}
+	// 	chartData.datasets.push(newDataset);
+	// 	window.chart.update();
+	// });
 
-		chartData.datasets.push(newDataset);
-		window.chart.update();
-	});
+	// document.getElementById('removeDataset').addEventListener('click', function() {
+	// 	console.log('[INFO] Entering function removeDataset');
 
-	document.getElementById('removeDataset').addEventListener('click', function() {
-		console.log('[INFO] Entering function removeDataset');
+	// 	chartData.datasets.pop();
+	// 	window.chart.update();
+	// });
 
-		chartData.datasets.pop();
-		window.chart.update();
-	});
+	// document.getElementById('removeData').addEventListener('click', function() {
+	// 	console.log('[INFO] Entering function removeData');
 
-	document.getElementById('removeData').addEventListener('click', function() {
-		console.log('[INFO] Entering function removeData');
+	// 	chartData.labels.splice(-1, 1); // remove the label first
 
-		chartData.labels.splice(-1, 1); // remove the label first
+	// 	chartData.datasets.forEach(function(dataset) {
+	// 		dataset.data.pop();
+	// 	});
 
-		chartData.datasets.forEach(function(dataset) {
-			dataset.data.pop();
-		});
-
-		window.chart.update();
-	});
+	// 	window.chart.update();
+	// });
 
 }); // $(document).ready(function() {
