@@ -97,6 +97,10 @@ class ChartHandler {
 					}],
 					yAxes: [{
 						stacked: true,
+						ticks: {
+              suggestedMin: -8,
+              suggestedMax: 8,
+            }
 					}]
 				}
 			}
@@ -129,8 +133,6 @@ $(document).ready(function() {
 	document.getElementById('addData').addEventListener('click', function() {
 		console.log('[INFO] ##### Entering function addData #####');
 
-		console.log('[INFO] WEEKDAYS: ' + WEEKDAYS);
-
 		// Only show the latest data inputs
 		// Only need to check one dataset since they should both be the same length
 		if(chartData.datasets[PLUS_DATASET].data.length >= MAX_DATA_LENGTH) {
@@ -160,6 +162,8 @@ $(document).ready(function() {
 
 		window.chartHandler.update();
 	});
+
+
 
 	document.getElementById('randomizeData').addEventListener('click', function() {
 		console.log('[INFO] Entering function randomizeData');
