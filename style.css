@@ -20,3 +20,8 @@ html, body {
     color: #3A4145;
 	font-family: 'Fira Sans', sans-serif;
 }
+
+#container {
+	width: 50vw;
+	height: 100%;
+}

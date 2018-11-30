@@ -27,9 +27,9 @@ const MAX_DATA_LENGTH = 8;
 const PLUS_DATASET = 0;
 const MINUS_DATASET = 1;
 const WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-// TODO: Remove once figured out stuff in options
-const Y_AXES_TICKS_MIN = -8;
-const Y_AXES_TICKS_MAX = 8;
+// TODO: Remove once figured out min/max ticks in chart options
+const Y_AXES_TICKS_SUGGESTED_MIN = -5;
+const Y_AXES_TICKS_SUGGESTED_MAX = 5;
 
 // Number to iterate through the WEEKDAYS array
 var WEEKDAY_NR = 0;
@@ -102,8 +102,8 @@ class ChartHandler {
 						stacked: true,
 						ticks: {
 							// TODO: Using const vars since I can't figure out how to access these options
-              min: Y_AXES_TICKS_MIN,
-              max: Y_AXES_TICKS_MAX,
+              suggestedMin: Y_AXES_TICKS_SUGGESTED_MIN,
+              suggestedMax: Y_AXES_TICKS_SUGGESTED_MAX,
             }
 					}]
 				}
@@ -120,12 +120,11 @@ class ChartHandler {
 		DEBUG_LOG("User input, Plus: " + nrPlus + " nrMinus: " + nrMinus);
 
 		// Minor fault handling
-		if(nrPlus  < Y_AXES_TICKS_MIN ||
-			 nrPlus  > Y_AXES_TICKS_MAX ||
-			 nrMinus < Y_AXES_TICKS_MIN ||
-			 nrMinus > Y_AXES_TICKS_MAX) {
-			// TODO: Uuhhh?
-			DEBUG_LOG('You are trying to add a value outside the set range (min: ' + Y_AXES_TICKS_MIN + ', max: ' + Y_AXES_TICKS_MAX + ')');
+		if(nrPlus  < Y_AXES_TICKS_SUGGESTED_MIN ||
+			 nrPlus  > Y_AXES_TICKS_SUGGESTED_MAX ||
+			 nrMinus < Y_AXES_TICKS_SUGGESTED_MIN ||
+			 nrMinus > Y_AXES_TICKS_SUGGESTED_MAX) {
+			DEBUG_LOG('You are adding values outside the suggested range (min: ' + Y_AXES_TICKS_SUGGESTED_MIN + ', max: ' + Y_AXES_TICKS_SUGGESTED_MAX + ')');
 		}
 
 		// We must have any valid data for input to the graph
