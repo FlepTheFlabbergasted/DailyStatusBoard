@@ -10,28 +10,28 @@
 
 // Add post it notes...
 
-// class StackedBarChart {
-// 	constructor() {
-
-// 	}
-	
-// 	init(){
-
-// 	}
-
-// }
-
+// TODO: Remove, initalialy used when debugging without user input
 function random(){
 	return Math.ceil(Math.random() * 10 + 1);
 }
 
-var MAX_DATA_LENGTH = 8;
-var DAY_NR = 0;
+const DEBUG = true;
+function DEBUG_LOG(string) {
+	if(DEBUG == true) {
+		console.log('[DEBUG]' + string);
+	}
+}
 
-var GREEN_DATASET = 0;
-var RED_DATASET = 1;
+// Constants
+const MAX_DATA_LENGTH = 8;
+const PLUS_DATASET = 0;
+const MINUS_DATASET = 1;
+const WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
+// Number to iterate through the WEEKDAYS array
+var WEEKDAY_NR = 0;
 
+// TODO: Needed? Just input the rgb string directly in the chartData?
 window.chartColors = {
 	red: 'rgb(220, 20, 60)',
 	redOp: 'rgb(220, 20, 60, 0.6)',
@@ -44,68 +44,75 @@ window.chartColors = {
 	grey: 'rgb(231,233,237)'
 };
 
-// var color = Chart.helpers.color;
-var weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-
-var barChartData = {
-	labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+/**
+ * Data for the displayed bar chart, this variable is used when updating
+ * the chart. Initialy start with no labels and no data that later gets added
+ * from user input. 
+ *
+ * TODO: Initialize with previously saved data
+ */
+var chartData = {
+	labels: [],
 	datasets: [{
-		label: 'Dataset 1',
+		label: 'Plus',
 		backgroundColor: window.chartColors.greenOp,//color(window.chartColors.green).alpha(0.5).rgbString(),
 		borderColor: window.chartColors.green,
 		borderWidth: 1,
-		data: [
-			random(),
-			random(),
-			random(),
-			random(),
-			random()
-		]
+		data: []
 	}, {
-		label: 'Dataset 2',
+		label: 'Minus',
 		backgroundColor: window.chartColors.redOp,
 		borderColor: window.chartColors.red,
 		borderWidth: 1,
-		data: [
-			random() * -1,
-			random() * -1,
-			random() * -1,
-			random() * -1,
-			random() * -1
-		]
+		data: []
 	}]
-}; // barChartData
+}; // chartData
+
+
+class ChartHandler {
+
+	constructor() {
+		console.log('[INFO] ##### Entering ChartHandler::constructor #####');
+		DEBUG_LOG('Initiating chart with Plus dataset: ' + chartData.datasets[PLUS_DATASET].data);
+		DEBUG_LOG('Initiating chart with Minus dataset: ' + chartData.datasets[MINUS_DATASET].data);
+
+		var ctx = document.getElementById('canvas').getContext('2d');
+		this.chart = new Chart(ctx, {
+			type: 'bar',
+			data: chartData,
+			options: {
+				title: {
+					display: true,
+					text: 'Daily Status'
+				},
+				tooltips: {
+					mode: 'index',
+					intersect: false
+				},
+				responsive: true,
+	    	maintainAspectRatio: false,
+				scales: {
+					xAxes: [{
+						stacked: true
+					}],
+					yAxes: [{
+						stacked: true,
+					}]
+				}
+			}
+		}); // window.chart
+	} // constructor
+
+	update() {
+		this.chart.update();
+	}
+
+} // class ChartHandler
 
 window.onload = function() {
-	console.log('[INFO] Initiating Chart');
-	console.log('[DEBUG] barChartData green dataset: ' + barChartData.datasets[GREEN_DATASET].data);
-	console.log('[DEBUG] barChartData red dataset: ' + barChartData.datasets[RED_DATASET].data);
-
-	var ctx = document.getElementById('canvas').getContext('2d');
-	window.myBar = new Chart(ctx, {
-		type: 'bar',
-		data: barChartData,
-		options: {
-			title: {
-				display: true,
-				text: 'Chart.js Bar Chart - Stacked'
-			},
-			tooltips: {
-				mode: 'index',
-				intersect: false
-			},
-			responsive: true,
-    	maintainAspectRatio: false,
-			scales: {
-				xAxes: [{
-					stacked: true
-				}],
-				yAxes: [{
-					stacked: true,
-				}]
-			}
-		}
-	});
+	// Create new ChartHandler to control the chart, all further operations will be 
+	// called using 'window.chartHandler'
+	window.chartHandler = new ChartHandler();
 }; // window.onload
 
 function commitData() {
@@ -120,110 +127,91 @@ function commitData() {
 $(document).ready(function() {
 
 	document.getElementById('addData').addEventListener('click', function() {
-		console.log('[INFO] ####### Entering function addData #######');
+		console.log('[INFO] ##### Entering function addData #####');
 
-		console.log('[INFO] weekDays: ' + weekDays);
+		console.log('[INFO] WEEKDAYS: ' + WEEKDAYS);
 
 		// Only show the latest data inputs
 		// Only need to check one dataset since they should both be the same length
-		if(barChartData.datasets[GREEN_DATASET].data.length >= MAX_DATA_LENGTH) {
-			console.log('[DEBUG] Dataset data is longer than MAX_DATA_LENGTH: ' + barChartData.datasets[GREEN_DATASET].data.length);
-			
-			console.log('[DEBUG] Labels before shift: ' + barChartData.labels);
-			console.log('[DEBUG] Green dataset  before shift: ' + barChartData.datasets[GREEN_DATASET].data);
-			console.log('[DEBUG] Red dataset before shift: ' + barChartData.datasets[RED_DATASET].data);
-
+		if(chartData.datasets[PLUS_DATASET].data.length >= MAX_DATA_LENGTH) {
+			DEBUG_LOG('Dataset data is longer than MAX_DATA_LENGTH ( ' + MAX_DATA_LENGTH + '), removing first datapoint');
 			// Remove the label first
-			// barChartData.labels.splice(0, 1);
-			barChartData.labels.shift();
-
+			chartData.labels.shift();
 			// Remove the first data point
-			barChartData.datasets[GREEN_DATASET].data.shift();
-			barChartData.datasets[RED_DATASET].data.shift();
-
-
-			console.log('[DEBUG] Labels after shift: ' + barChartData.labels);
-			console.log('[DEBUG] Green after shift: ' + barChartData.datasets[GREEN_DATASET].data);
-			console.log('[DEBUG] Red after shift: ' + barChartData.datasets[RED_DATASET].data);
+			chartData.datasets[PLUS_DATASET].data.shift();
+			chartData.datasets[MINUS_DATASET].data.shift();
 		}
 
-		console.log('[DEBUG] Labels before push: ' + barChartData.labels);
-		console.log('[DEBUG] DAY_NR: ' + DAY_NR);
-
-		// var day = weekDays[barChartData.labels.length % weekDays.length];
-		var day = weekDays[DAY_NR++];
-		if(DAY_NR == (weekDays.length)) {
-			DAY_NR = 0;
+		let day = WEEKDAYS[WEEKDAY_NR++];
+		if(WEEKDAY_NR == (WEEKDAYS.length)) {
+			WEEKDAY_NR = 0;
 		}
-		barChartData.labels.push(day);
+		chartData.labels.push(day);
 
-		console.log('[DEBUG] Labels after push: ' + barChartData.labels);
-		console.log('[DEBUG] Day: ' + day);
-		console.log('[DEBUG] Green dataset  before shift: ' + barChartData.datasets[GREEN_DATASET].data);
-		console.log('[DEBUG] Red dataset before shift: ' + barChartData.datasets[RED_DATASET].data);
+		DEBUG_LOG('Current labels: ' + chartData.labels);
+		DEBUG_LOG('Weekday to add: ' + day);
+		DEBUG_LOG('Plus dataset  before additional data: ' + chartData.datasets[PLUS_DATASET].data);
+		DEBUG_LOG('Minus dataset before additional data: ' + chartData.datasets[MINUS_DATASET].data);
 
-		barChartData.datasets[GREEN_DATASET].data.push(random());
-		barChartData.datasets[RED_DATASET].data.push(random());
-		
+		// Add data to dataset
+		// TODO: Take input from user instead of random data
+		chartData.datasets[PLUS_DATASET].data.push(random());
+		chartData.datasets[MINUS_DATASET].data.push(random());
 
-		console.log('[DEBUG] Green after shift: ' + barChartData.datasets[GREEN_DATASET].data);
-		console.log('[DEBUG] Red after shift: ' + barChartData.datasets[RED_DATASET].data);
-
-		window.myBar.update();
-	
+		window.chartHandler.update();
 	});
 
 	document.getElementById('randomizeData').addEventListener('click', function() {
 		console.log('[INFO] Entering function randomizeData');
 		var zero = Math.random() < 0.2 ? true : false;
-		barChartData.datasets.forEach(function(dataset) {
+		chartData.datasets.forEach(function(dataset) {
 			dataset.data = dataset.data.map(function() {
 				return zero ? 0.0 : random();
 			});
 
 		});
-		window.myBar.update();
+		window.chart.update();
 	});
 
 	// var colorNames = Object.keys(window.chartColors);
 	document.getElementById('addDataset').addEventListener('click', function() {
 		console.log('[INFO] Entering function addDataset');
 
-		// var colorName = colorNames[barChartData.datasets.length % colorNames.length];
+		// var colorName = colorNames[chartData.datasets.length % colorNames.length];
 		// var dsColor = window.chartColors[colorName];
 		var newDataset = {
-			label: 'Dataset ' + (barChartData.datasets.length + 1),
+			label: 'Dataset ' + (chartData.datasets.length + 1),
 			// backgroundColor: color(dsColor).alpha(0.5).rgbString(),
 			// borderColor: dsColor,
 			borderWidth: 1,
 			data: []
 		};
 
-		for (var index = 0; index < barChartData.labels.length; ++index) {
+		for (var index = 0; index < chartData.labels.length; ++index) {
 			newDataset.data.push(random());
 		}
 
-		barChartData.datasets.push(newDataset);
-		window.myBar.update();
+		chartData.datasets.push(newDataset);
+		window.chart.update();
 	});
 
 	document.getElementById('removeDataset').addEventListener('click', function() {
 		console.log('[INFO] Entering function removeDataset');
 
-		barChartData.datasets.pop();
-		window.myBar.update();
+		chartData.datasets.pop();
+		window.chart.update();
 	});
 
 	document.getElementById('removeData').addEventListener('click', function() {
 		console.log('[INFO] Entering function removeData');
 
-		barChartData.labels.splice(-1, 1); // remove the label first
+		chartData.labels.splice(-1, 1); // remove the label first
 
-		barChartData.datasets.forEach(function(dataset) {
+		chartData.datasets.forEach(function(dataset) {
 			dataset.data.pop();
 		});
 
-		window.myBar.update();
+		window.chart.update();
 	});
 
 }); // $(document).ready(function() {
