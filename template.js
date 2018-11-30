@@ -10,9 +10,27 @@
 
 // Add post it notes...
 
+// class StackedBarChart {
+// 	constructor() {
+
+// 	}
+	
+// 	init(){
+
+// 	}
+
+// }
+
 function random(){
-	return Math.random() * 10 + 1;
+	return Math.ceil(Math.random() * 10 + 1);
 }
+
+var MAX_DATA_LENGTH = 8;
+var DAY_NR = 0;
+
+var GREEN_DATASET = 0;
+var RED_DATASET = 1;
+
 
 window.chartColors = {
 	red: 'rgb(220, 20, 60)',
@@ -28,6 +46,7 @@ window.chartColors = {
 
 // var color = Chart.helpers.color;
 var weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+
 var barChartData = {
 	labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
 	datasets: [{
@@ -36,8 +55,6 @@ var barChartData = {
 		borderColor: window.chartColors.green,
 		borderWidth: 1,
 		data: [
-			random(),
-			random(),
 			random(),
 			random(),
 			random(),
@@ -54,14 +71,16 @@ var barChartData = {
 			random() * -1,
 			random() * -1,
 			random() * -1,
-			random() * -1,
-			random() * -1,
 			random() * -1
 		]
 	}]
 }; // barChartData
 
 window.onload = function() {
+	console.log('[INFO] Initiating Chart');
+	console.log('[DEBUG] barChartData green dataset: ' + barChartData.datasets[GREEN_DATASET].data);
+	console.log('[DEBUG] barChartData red dataset: ' + barChartData.datasets[RED_DATASET].data);
+
 	var ctx = document.getElementById('canvas').getContext('2d');
 	window.myBar = new Chart(ctx, {
 		type: 'bar',
@@ -79,10 +98,10 @@ window.onload = function() {
     	maintainAspectRatio: false,
 			scales: {
 				xAxes: [{
-					stacked: true,
+					stacked: true
 				}],
 				yAxes: [{
-					stacked: true
+					stacked: true,
 				}]
 			}
 		}
@@ -90,6 +109,8 @@ window.onload = function() {
 }; // window.onload
 
 function commitData() {
+	console.log('[INFO] Entering function commitData');
+
 	var plus = $('#plus-input').val();
 	var minus = $('#minus-input').val();
 	console.log("Plus: " + plus + " Minus: " + minus);
@@ -98,7 +119,62 @@ function commitData() {
 
 $(document).ready(function() {
 
+	document.getElementById('addData').addEventListener('click', function() {
+		console.log('[INFO] ####### Entering function addData #######');
+
+		console.log('[INFO] weekDays: ' + weekDays);
+
+		// Only show the latest data inputs
+		// Only need to check one dataset since they should both be the same length
+		if(barChartData.datasets[GREEN_DATASET].data.length >= MAX_DATA_LENGTH) {
+			console.log('[DEBUG] Dataset data is longer than MAX_DATA_LENGTH: ' + barChartData.datasets[GREEN_DATASET].data.length);
+			
+			console.log('[DEBUG] Labels before shift: ' + barChartData.labels);
+			console.log('[DEBUG] Green dataset  before shift: ' + barChartData.datasets[GREEN_DATASET].data);
+			console.log('[DEBUG] Red dataset before shift: ' + barChartData.datasets[RED_DATASET].data);
+
+			// Remove the label first
+			// barChartData.labels.splice(0, 1);
+			barChartData.labels.shift();
+
+			// Remove the first data point
+			barChartData.datasets[GREEN_DATASET].data.shift();
+			barChartData.datasets[RED_DATASET].data.shift();
+
+
+			console.log('[DEBUG] Labels after shift: ' + barChartData.labels);
+			console.log('[DEBUG] Green after shift: ' + barChartData.datasets[GREEN_DATASET].data);
+			console.log('[DEBUG] Red after shift: ' + barChartData.datasets[RED_DATASET].data);
+		}
+
+		console.log('[DEBUG] Labels before push: ' + barChartData.labels);
+		console.log('[DEBUG] DAY_NR: ' + DAY_NR);
+
+		// var day = weekDays[barChartData.labels.length % weekDays.length];
+		var day = weekDays[DAY_NR++];
+		if(DAY_NR == (weekDays.length)) {
+			DAY_NR = 0;
+		}
+		barChartData.labels.push(day);
+
+		console.log('[DEBUG] Labels after push: ' + barChartData.labels);
+		console.log('[DEBUG] Day: ' + day);
+		console.log('[DEBUG] Green dataset  before shift: ' + barChartData.datasets[GREEN_DATASET].data);
+		console.log('[DEBUG] Red dataset before shift: ' + barChartData.datasets[RED_DATASET].data);
+
+		barChartData.datasets[GREEN_DATASET].data.push(random());
+		barChartData.datasets[RED_DATASET].data.push(random());
+		
+
+		console.log('[DEBUG] Green after shift: ' + barChartData.datasets[GREEN_DATASET].data);
+		console.log('[DEBUG] Red after shift: ' + barChartData.datasets[RED_DATASET].data);
+
+		window.myBar.update();
+	
+	});
+
 	document.getElementById('randomizeData').addEventListener('click', function() {
+		console.log('[INFO] Entering function randomizeData');
 		var zero = Math.random() < 0.2 ? true : false;
 		barChartData.datasets.forEach(function(dataset) {
 			dataset.data = dataset.data.map(function() {
@@ -111,6 +187,8 @@ $(document).ready(function() {
 
 	// var colorNames = Object.keys(window.chartColors);
 	document.getElementById('addDataset').addEventListener('click', function() {
+		console.log('[INFO] Entering function addDataset');
+
 		// var colorName = colorNames[barChartData.datasets.length % colorNames.length];
 		// var dsColor = window.chartColors[colorName];
 		var newDataset = {
@@ -129,26 +207,16 @@ $(document).ready(function() {
 		window.myBar.update();
 	});
 
-	document.getElementById('addData').addEventListener('click', function() {
-		if (barChartData.datasets.length > 0) {
-			var month = weekDays[barChartData.labels.length % weekDays.length];
-			barChartData.labels.push(month);
-
-			for (var index = 0; index < barChartData.datasets.length; ++index) {
-				// window.myBar.addData(random(), index);
-				barChartData.datasets[index].data.push(random());
-			}
-
-			window.myBar.update();
-		}
-	});
-
 	document.getElementById('removeDataset').addEventListener('click', function() {
+		console.log('[INFO] Entering function removeDataset');
+
 		barChartData.datasets.pop();
 		window.myBar.update();
 	});
 
 	document.getElementById('removeData').addEventListener('click', function() {
+		console.log('[INFO] Entering function removeData');
+
 		barChartData.labels.splice(-1, 1); // remove the label first
 
 		barChartData.datasets.forEach(function(dataset) {
