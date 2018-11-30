@@ -22,6 +22,8 @@ html, body {
 }
 
 #chartContainer {
-	width: 50vw;
-	height: 100%;
+	display: inline-block;
+	float: left;
+	width: 49vw;
+	height: 95%; /* 100% and you can't see the underneath controls for the chart */
 }
