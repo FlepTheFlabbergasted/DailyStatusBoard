@@ -9,19 +9,34 @@
 	<meta name="author" content="Filip Strandberg"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
+	<!-- Cdn  -->
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-	<script type="text/javascript" src="script.js"></script>
-	<link rel="stylesheet" type="text/css" href="style.css">
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+
+	<!-- Local -->
+	<script type="text/javascript" src="scripts/chart.js"></script>
+	<script type="text/javascript" src="scripts/dragndrop.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/general.css">
+	<link rel="stylesheet" type="text/css" href="css/postit.css">
+	
 </head>
 <body>
-	<div id="container">
+	<div id="chartContainer">
 		<canvas id="canvas"></canvas>
 		<input type="number" id="plusInput" value="0"/>
 		<input type="number" id="minusInput" value="0"/>
 		<button id="commitData">Commit Data</button>
 		<button id="addRandomData">Add Random Data</button>
 	</div>
+
+<!-- 	<div id="postitContainer" ondrop="drop(event)" ondragover="drag_over(event)">
+		<div class="postit" draggable="true" ondragstart="drag_start(event)" id="sdfsdf">
+			<textarea>Drag me! 1</textarea>
+		</div>
+		<div class="postit" draggable="true" ondragstart="drag_start(event)" id="sdfsdfasd">
+			<textarea>Drag me! 2</textarea>
+		</div>
+	</div> -->
 
 	<!-- <button id="randomizeData">Randomize Data</button>
 	<button id="addDataset">Add Dataset</button>
