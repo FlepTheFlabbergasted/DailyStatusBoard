@@ -51,8 +51,6 @@ window.chartColors = {
  * Data for the displayed bar chart, this variable is used when updating
  * the chart. Initialy start with no labels and no data that later gets added
  * from user input. 
- *
- * TODO: Initialize with previously saved data
  */
 var chartData = {
 	labels: [],
@@ -76,8 +74,17 @@ class ChartHandler {
 
 	constructor() {
 		console.log('[INFO] ##### Entering ChartHandler::constructor #####');
-		DEBUG_LOG('Initiating chart with Plus dataset: ' + chartData.datasets[PLUS_DATASET].data);
-		DEBUG_LOG('Initiating chart with Minus dataset: ' + chartData.datasets[MINUS_DATASET].data);
+
+		let labels = Cookies.getJSON('Labels');
+		let plusData = Cookies.getJSON('PlusData');
+		let minusData = Cookies.getJSON('MinusData');
+
+		if(plusData != undefined && minusData != undefined) {
+			DEBUG_LOG('Initiating chart with previously stored data:\nLabels [' + labels[0] + '], ' + 'PlusData [' + plusData + '], ' + 'MinusData [' + minusData + ']');
+			chartData.labels = labels;
+			chartData.datasets[PLUS_DATASET].data = plusData;
+			chartData.datasets[MINUS_DATASET].data = minusData;
+		}
 
 		var ctx = document.getElementById('canvas').getContext('2d');
 		this.chart = new Chart(ctx, {
@@ -120,7 +127,7 @@ class ChartHandler {
 
 	update() {
 		this.chart.update();
-	}
+	} // update
 
 	addData(nrPlus, nrMinus) {
 		console.log('[INFO] ##### Entering ChartHandler::addData #####');
@@ -174,10 +181,15 @@ class ChartHandler {
 		chartData.datasets[MINUS_DATASET].data.push(nrMinus * -1);
 
 		// Store Data
+		DEBUG_LOG('Saving plus dataset: ' + chartData.datasets[PLUS_DATASET].data);
+		DEBUG_LOG('Saving minus dataset: ' + chartData.datasets[MINUS_DATASET].data);
+		DEBUG_LOG('Saving labels: ' + chartData.labels);
+		Cookies.set('Labels', chartData.labels);
 		Cookies.set('PlusData', chartData.datasets[PLUS_DATASET].data);
+		Cookies.set('MinusData', chartData.datasets[MINUS_DATASET].data);		
 
 		this.update();
-	}
+	} // addData
 
 } // class ChartHandler
 
@@ -189,14 +201,10 @@ window.onload = function() {
 
 $(document).ready(function() {
 
-	document.getElementById('addRandomData').addEventListener('click', function() {
+/*	document.getElementById('addRandomData').addEventListener('click', function() {
 		console.log('[INFO] ##### Entering function addRandomData #####');
 
-		// Get data
-		var hej = Cookies.get('PlusData');
-		alert(hej);
-		
-		/*// Only show the latest data inputs
+		// Only show the latest data inputs
 		// Only need to check one dataset since they should both be the same length
 		if(chartData.datasets[PLUS_DATASET].data.length >= MAX_DATA_LENGTH) {
 			DEBUG_LOG('Dataset data is longer than MAX_DATA_LENGTH (' + MAX_DATA_LENGTH + '), removing first datapoint');
@@ -223,8 +231,19 @@ $(document).ready(function() {
 		chartData.datasets[PLUS_DATASET].data.push(random());
 		chartData.datasets[MINUS_DATASET].data.push(random());
 
-		window.chartHandler.update();*/
-	}); // addData
+		window.chartHandler.update();
+	}); // addRandomData*/
+
+	document.getElementById('deleteStoredData').addEventListener('click', function() {
+		if (confirm('Are you sure you want to remove previously saved data?')) {
+			DEBUG_LOG('Removing stored data (cookies)');
+			Cookies.remove('Labels');
+			Cookies.remove('PlusData');
+			Cookies.remove('MinusData');
+		} else {
+			// Do nothing!
+		}
+	});
 
 	document.getElementById('submitData').addEventListener('click', function() {
 		console.log('[INFO] ##### Entering function submitData #####');
