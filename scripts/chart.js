@@ -101,7 +101,7 @@ class ChartHandler {
 					xAxes: [{
 						stacked: true,
 						ticks: {
-							fontSize: 25,
+							fontSize: 15,
            				}
 					}],
 					yAxes: [{
@@ -219,13 +219,18 @@ $(document).ready(function() {
 		window.chartHandler.update();
 	}); // addData
 
-	document.getElementById('commitData').addEventListener('click', function() {
-		console.log('[INFO] ##### Entering function commitData #####');
+	document.getElementById('submitData').addEventListener('click', function() {
+		console.log('[INFO] ##### Entering function submitData #####');
 
 		let plus = $('#plusInput').val();
 		let minus = $('#minusInput').val();
+		
+		// Reset the input
+		$('#plusInput').val(0);
+		$('#minusInput').val(0);
+
 		window.chartHandler.addData(plus, minus);
-	}); // commitData
+	}); // submitData
 
 	document.getElementById('plusButton').addEventListener('click', function() {
 		let nrPlus = $('#plusInput').val();
