@@ -80,7 +80,7 @@ class ChartHandler {
 		let minusData = Cookies.getJSON('MinusData');
 
 		if(plusData != undefined && minusData != undefined) {
-			DEBUG_LOG('Initiating chart with previously stored data:\nLabels [' + labels[0] + '], ' + 'PlusData [' + plusData + '], ' + 'MinusData [' + minusData + ']');
+			DEBUG_LOG('Initiating chart with previously stored data:\nLabels [' + labels + '], ' + 'PlusData [' + plusData + '], ' + 'MinusData [' + minusData + ']');
 			chartData.labels = labels;
 			chartData.datasets[PLUS_DATASET].data = plusData;
 			chartData.datasets[MINUS_DATASET].data = minusData;
