@@ -173,6 +173,9 @@ class ChartHandler {
 		chartData.datasets[PLUS_DATASET].data.push(nrPlus);
 		chartData.datasets[MINUS_DATASET].data.push(nrMinus * -1);
 
+		// Store Data
+		Cookies.set('PlusData', chartData.datasets[PLUS_DATASET].data);
+
 		this.update();
 	}
 
@@ -189,7 +192,11 @@ $(document).ready(function() {
 	document.getElementById('addRandomData').addEventListener('click', function() {
 		console.log('[INFO] ##### Entering function addRandomData #####');
 
-		// Only show the latest data inputs
+		// Get data
+		var hej = Cookies.get('PlusData');
+		alert(hej);
+		
+		/*// Only show the latest data inputs
 		// Only need to check one dataset since they should both be the same length
 		if(chartData.datasets[PLUS_DATASET].data.length >= MAX_DATA_LENGTH) {
 			DEBUG_LOG('Dataset data is longer than MAX_DATA_LENGTH (' + MAX_DATA_LENGTH + '), removing first datapoint');
@@ -216,7 +223,7 @@ $(document).ready(function() {
 		chartData.datasets[PLUS_DATASET].data.push(random());
 		chartData.datasets[MINUS_DATASET].data.push(random());
 
-		window.chartHandler.update();
+		window.chartHandler.update();*/
 	}); // addData
 
 	document.getElementById('submitData').addEventListener('click', function() {
@@ -243,6 +250,7 @@ $(document).ready(function() {
 		nrMinus++;
 		$('#minusInput').val(nrMinus);
 	});
+
 	// document.getElementById('randomizeData').addEventListener('click', function() {
 	// 	console.log('[INFO] Entering function randomizeData');
 	// 	var zero = Math.random() < 0.2 ? true : false;
