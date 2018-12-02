@@ -85,8 +85,11 @@ class ChartHandler {
 			data: chartData,
 			options: {
 				title: {
-					display: true,
+					display: false,
 					text: 'Daily Status'
+				},
+				legend: {
+					display: false,
 				},
 				tooltips: {
 					mode: 'index',
@@ -96,15 +99,19 @@ class ChartHandler {
 	    	maintainAspectRatio: false,
 				scales: {
 					xAxes: [{
-						stacked: true
+						stacked: true,
+						ticks: {
+							fontSize: 25,
+           				}
 					}],
 					yAxes: [{
 						stacked: true,
 						ticks: {
+							fontSize: 25,
 							// TODO: Using const vars since I can't figure out how to access these options
-              suggestedMin: Y_AXES_TICKS_SUGGESTED_MIN,
-              suggestedMax: Y_AXES_TICKS_SUGGESTED_MAX,
-            }
+							suggestedMin: Y_AXES_TICKS_SUGGESTED_MIN,
+							suggestedMax: Y_AXES_TICKS_SUGGESTED_MAX,
+           				}
 					}]
 				}
 			}
