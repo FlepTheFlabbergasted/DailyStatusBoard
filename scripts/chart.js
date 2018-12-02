@@ -23,16 +23,13 @@ function DEBUG_LOG(string) {
 }
 
 // Constants
-const MAX_DATA_LENGTH = 8;
+const MAX_DATA_LENGTH = 10;
 const PLUS_DATASET = 0;
 const MINUS_DATASET = 1;
-const WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-// TODO: Remove once figured out min/max ticks in chart options
+const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+// TODO: Remove once figured out how to retreive min/max ticks in chart options
 const Y_AXES_TICKS_SUGGESTED_MIN = -5;
 const Y_AXES_TICKS_SUGGESTED_MAX = 5;
-
-// Number to iterate through the WEEKDAYS array
-var WEEKDAY_NR = 0;
 
 // TODO: Needed? Just input the rgb string directly in the chartData?
 window.chartColors = {
@@ -69,9 +66,7 @@ var chartData = {
 	}]
 }; // chartData
 
-
 class ChartHandler {
-
 	constructor() {
 		console.log('[INFO] ##### Entering ChartHandler::constructor #####');
 
@@ -164,33 +159,26 @@ class ChartHandler {
 			chartData.datasets[MINUS_DATASET].data.shift();
 		}
 
-		let day = WEEKDAYS[WEEKDAY_NR++];
-		if(WEEKDAY_NR == (WEEKDAYS.length)) {
-			WEEKDAY_NR = 0;
-		}
+		DEBUG_LOG('Label to add: ' + WEEKDAYS[new Date().getDay()]);
+		DEBUG_LOG('Plus data  to add: ' + nrPlus);
+		DEBUG_LOG('Minus data to add: ' + nrMinus);
 
-		DEBUG_LOG('Current labels: ' + chartData.labels);
-		DEBUG_LOG('Weekday to add: ' + day);
-		DEBUG_LOG('Plus dataset  before additional data: ' + chartData.datasets[PLUS_DATASET].data);
-		DEBUG_LOG('Minus dataset before additional data: ' + chartData.datasets[MINUS_DATASET].data);
-		
 		// Add label
-		chartData.labels.push(day);
+		chartData.labels.push(WEEKDAYS[new Date().getDay()]);
 		// Add data to dataset
 		chartData.datasets[PLUS_DATASET].data.push(nrPlus);
 		chartData.datasets[MINUS_DATASET].data.push(nrMinus * -1);
 
 		// Store Data
-		DEBUG_LOG('Saving plus dataset: ' + chartData.datasets[PLUS_DATASET].data);
-		DEBUG_LOG('Saving minus dataset: ' + chartData.datasets[MINUS_DATASET].data);
-		DEBUG_LOG('Saving labels: ' + chartData.labels);
+		DEBUG_LOG('Storing labels: ' + chartData.labels);
+		DEBUG_LOG('Storing plus dataset: ' + chartData.datasets[PLUS_DATASET].data);
+		DEBUG_LOG('Storing minus dataset: ' + chartData.datasets[MINUS_DATASET].data);
 		Cookies.set('Labels', chartData.labels);
 		Cookies.set('PlusData', chartData.datasets[PLUS_DATASET].data);
 		Cookies.set('MinusData', chartData.datasets[MINUS_DATASET].data);		
 
 		this.update();
 	} // addData
-
 } // class ChartHandler
 
 window.onload = function() {
