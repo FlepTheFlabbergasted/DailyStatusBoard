@@ -22,29 +22,30 @@
 	
 </head>
 <body>
-	<div id="chartContainer">
-		<canvas id="canvas"></canvas>
-		<div class="flex-container">
-			<input type="number" id="plusInput" value="0"/>
-			<button id="plusButton">+</button>
-			<input type="number" id="minusInput" value="0"/>
-			<button id="minusButton">-</button>
+	<div class="row">
+		<div id="chartContainer">
+			<canvas id="canvas"></canvas>
+			<div class="flex-container">
+				<input type="number" id="plusInput" value="0"/>
+				<button id="plusButton">+</button>
+				<input type="number" id="minusInput" value="0"/>
+				<button id="minusButton">-</button>
 
-			<button id="submitData">Submit Data</button>
-			<!-- <button id="addRandomData">Add Random Data</button> -->
-			<button id="deleteStoredData">Delete Stored Data</button>
+				<button id="submitData">Submit Data</button>
+				<!-- <button id="addRandomData">Add Random Data</button> -->
+				<button id="deleteStoredData">Delete Stored Data</button>
+			</div>
+		</div>
+
+		<div id="postitContainer" ondrop="drop(event)" ondragover="drag_over(event)">
+			<div class="postit" draggable="true" ondragstart="drag_start(event)" id="sdfsdf">
+				<textarea>Drag me! 1</textarea>
+			</div>
+			<div class="postit" draggable="true" ondragstart="drag_start(event)" id="sdfsdfasd">
+				<textarea>Drag me! 2</textarea>
+			</div>
 		</div>
 	</div>
-
-	<div id="postitContainer" ondrop="drop(event)" ondragover="drag_over(event)">
-		<div class="postit" draggable="true" ondragstart="drag_start(event)" id="sdfsdf">
-			<textarea>Drag me! 1</textarea>
-		</div>
-		<div class="postit" draggable="true" ondragstart="drag_start(event)" id="sdfsdfasd">
-			<textarea>Drag me! 2</textarea>
-		</div>
-	</div>
-
 	<!-- <button id="randomizeData">Randomize Data</button>
 	<button id="addDataset">Add Dataset</button>
 	<button id="removeDataset">Remove Dataset</button>

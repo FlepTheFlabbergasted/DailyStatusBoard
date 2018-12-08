@@ -59,7 +59,7 @@
 	margin: 0;
 	width: 49vw;
 	height: 95%; /* 100% and you can't see the underneath controls for the chart */
-	border: 2px solid black;
+	/*border: 2px solid black;*/
 }
 
 textarea {
