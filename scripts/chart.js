@@ -195,6 +195,14 @@ class ChartHandler {
 
 		this.update();
 	} // addData
+
+	clear() {
+		chartData.labels = [];
+		chartData.datasets[PLUS_DATASET].data = [];
+		chartData.datasets[MINUS_DATASET].data = [];
+		this.update();
+	}
+
 } // class ChartHandler
 
 window.onload = function() {
@@ -244,7 +252,7 @@ $(document).ready(function() {
 			Cookies.remove('Labels');
 			Cookies.remove('PlusData');
 			Cookies.remove('MinusData');
-			// TODO: Clear and update chart
+			window.chartHandler.clear();
 		} else {
 			// Do nothing!
 		}
