@@ -31,6 +31,8 @@ const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Frida
 const Y_AXES_TICKS_SUGGESTED_MIN = -5;
 const Y_AXES_TICKS_SUGGESTED_MAX = 5;
 
+var LAST_ADDED_DATE = '';
+
 // TODO: Needed? Just input the rgb string directly in the chartData?
 window.chartColors = {
 	red: 'rgb(220, 20, 60)',
@@ -70,12 +72,13 @@ class ChartHandler {
 	constructor() {
 		console.log('[INFO] ##### Entering ChartHandler::constructor #####');
 
+		LAST_ADDED_DATE = Cookies.get('Last Added Date');
 		let labels = Cookies.getJSON('Labels');
 		let plusData = Cookies.getJSON('PlusData');
 		let minusData = Cookies.getJSON('MinusData');
 
 		if(plusData != undefined && minusData != undefined) {
-			DEBUG_LOG('Initiating chart with previously stored data:\nLabels [' + labels + '], ' + 'PlusData [' + plusData + '], ' + 'MinusData [' + minusData + ']');
+			DEBUG_LOG('Initiating chart with previously stored data:\nLabels [' + labels + '], PlusData [' + plusData + '], MinusData [' + minusData + '], Last Added Date: ' +  LAST_ADDED_DATE);
 			chartData.labels = labels;
 			chartData.datasets[PLUS_DATASET].data = plusData;
 			chartData.datasets[MINUS_DATASET].data = minusData;
@@ -159,20 +162,33 @@ class ChartHandler {
 			chartData.datasets[MINUS_DATASET].data.shift();
 		}
 
+		DEBUG_LOG('Last Added Date: ' + LAST_ADDED_DATE);
 		DEBUG_LOG('Label to add: ' + WEEKDAYS[new Date().getDay()]);
 		DEBUG_LOG('Plus data  to add: ' + nrPlus);
 		DEBUG_LOG('Minus data to add: ' + nrMinus);
 
-		// Add label
-		chartData.labels.push(WEEKDAYS[new Date().getDay()]);
-		// Add data to dataset
-		chartData.datasets[PLUS_DATASET].data.push(nrPlus);
-		chartData.datasets[MINUS_DATASET].data.push(nrMinus * -1);
+		// Overwrite data if adding on the same day (gets date as YYYY-MM-DD)
+		if(LAST_ADDED_DATE == new Date().toISOString().slice(0,10)) {
+			chartData.labels.pop();
+			chartData.datasets[PLUS_DATASET].data.pop();
+			chartData.datasets[MINUS_DATASET].data.pop();
+			chartData.labels.push(WEEKDAYS[new Date().getDay()]);
+			chartData.datasets[PLUS_DATASET].data.push(nrPlus);
+			chartData.datasets[MINUS_DATASET].data.push(nrMinus * -1);
+		} else {
+			LAST_ADDED_DATE = new Date().toISOString().slice(0,10);
+			chartData.labels.push(WEEKDAYS[new Date().getDay()]);
+			chartData.datasets[PLUS_DATASET].data.push(nrPlus);
+			chartData.datasets[MINUS_DATASET].data.push(nrMinus * -1);
+		}
+		
 
 		// Store Data
+		DEBUG_LOG('Storing last added date: ' + LAST_ADDED_DATE);
 		DEBUG_LOG('Storing labels: ' + chartData.labels);
 		DEBUG_LOG('Storing plus dataset: ' + chartData.datasets[PLUS_DATASET].data);
 		DEBUG_LOG('Storing minus dataset: ' + chartData.datasets[MINUS_DATASET].data);
+		Cookies.set('Last Added Date', LAST_ADDED_DATE);
 		Cookies.set('Labels', chartData.labels);
 		Cookies.set('PlusData', chartData.datasets[PLUS_DATASET].data);
 		Cookies.set('MinusData', chartData.datasets[MINUS_DATASET].data);		
@@ -228,6 +244,7 @@ $(document).ready(function() {
 			Cookies.remove('Labels');
 			Cookies.remove('PlusData');
 			Cookies.remove('MinusData');
+			// TODO: Clear and update chart
 		} else {
 			// Do nothing!
 		}
