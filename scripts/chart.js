@@ -31,7 +31,7 @@ const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Frida
 const Y_AXES_TICKS_SUGGESTED_MIN = -5;
 const Y_AXES_TICKS_SUGGESTED_MAX = 5;
 
-var LAST_ADDED_DATE = '';
+var DATA_DATES = [];
 
 // TODO: Needed? Just input the rgb string directly in the chartData?
 window.chartColors = {
@@ -72,13 +72,15 @@ class ChartHandler {
 	constructor() {
 		console.log('[INFO] ##### Entering ChartHandler::constructor #####');
 
-		LAST_ADDED_DATE = Cookies.get('Last Added Date');
 		let labels = Cookies.getJSON('Labels');
 		let plusData = Cookies.getJSON('PlusData');
 		let minusData = Cookies.getJSON('MinusData');
 
 		if(plusData != undefined && minusData != undefined) {
-			DEBUG_LOG('Initiating chart with previously stored data:\nLabels [' + labels + '], PlusData [' + plusData + '], MinusData [' + minusData + '], Last Added Date: ' +  LAST_ADDED_DATE);
+			// We retreive DATA_DATES here since getting it if nothing else is defined overwrites it with 'undefined'
+			DATA_DATES = Cookies.getJSON('Data Dates');
+
+			DEBUG_LOG('Initiating chart with previously stored data:\nLabels [' + labels + '], PlusData [' + plusData + '], MinusData [' + minusData + '], Data Dates [' +  DATA_DATES + ']');
 			chartData.labels = labels;
 			chartData.datasets[PLUS_DATASET].data = plusData;
 			chartData.datasets[MINUS_DATASET].data = minusData;
@@ -132,6 +134,7 @@ class ChartHandler {
 		DEBUG_LOG("User input, Plus: " + nrPlus + " nrMinus: " + nrMinus);
 
 		// Minor fault handling
+		// TODO: Add too high +/- restriction
 		if(nrPlus  < Y_AXES_TICKS_SUGGESTED_MIN ||
 			 nrPlus  > Y_AXES_TICKS_SUGGESTED_MAX ||
 			 nrMinus < Y_AXES_TICKS_SUGGESTED_MIN ||
@@ -162,33 +165,33 @@ class ChartHandler {
 			chartData.datasets[MINUS_DATASET].data.shift();
 		}
 
-		DEBUG_LOG('Last Added Date: ' + LAST_ADDED_DATE);
+		DEBUG_LOG('Data Dates: ' + DATA_DATES);
 		DEBUG_LOG('Label to add: ' + WEEKDAYS[new Date().getDay()]);
 		DEBUG_LOG('Plus data  to add: ' + nrPlus);
 		DEBUG_LOG('Minus data to add: ' + nrMinus);
 
 		// Overwrite data if adding on the same day (gets date as YYYY-MM-DD)
-		if(LAST_ADDED_DATE == new Date().toISOString().slice(0,10)) {
+		if(DATA_DATES[DATA_DATES.length - 1] == new Date().toISOString().slice(0,10)) {
+			// Remove last index of array
+			DATA_DATES.pop();
 			chartData.labels.pop();
 			chartData.datasets[PLUS_DATASET].data.pop();
 			chartData.datasets[MINUS_DATASET].data.pop();
-			chartData.labels.push(WEEKDAYS[new Date().getDay()]);
-			chartData.datasets[PLUS_DATASET].data.push(nrPlus);
-			chartData.datasets[MINUS_DATASET].data.push(nrMinus * -1);
-		} else {
-			LAST_ADDED_DATE = new Date().toISOString().slice(0,10);
-			chartData.labels.push(WEEKDAYS[new Date().getDay()]);
-			chartData.datasets[PLUS_DATASET].data.push(nrPlus);
-			chartData.datasets[MINUS_DATASET].data.push(nrMinus * -1);
 		}
 		
+		
+		// Add new data
+		DATA_DATES.push(new Date().toISOString().slice(0,10));
+		chartData.labels.push(WEEKDAYS[new Date().getDay()]);
+		chartData.datasets[PLUS_DATASET].data.push(nrPlus);
+		chartData.datasets[MINUS_DATASET].data.push(nrMinus * -1);
 
 		// Store Data
-		DEBUG_LOG('Storing last added date: ' + LAST_ADDED_DATE);
+		DEBUG_LOG('Storing Data Dates: ' + DATA_DATES);
 		DEBUG_LOG('Storing labels: ' + chartData.labels);
 		DEBUG_LOG('Storing plus dataset: ' + chartData.datasets[PLUS_DATASET].data);
 		DEBUG_LOG('Storing minus dataset: ' + chartData.datasets[MINUS_DATASET].data);
-		Cookies.set('Last Added Date', LAST_ADDED_DATE);
+		Cookies.set('Data Dates', DATA_DATES);
 		Cookies.set('Labels', chartData.labels);
 		Cookies.set('PlusData', chartData.datasets[PLUS_DATASET].data);
 		Cookies.set('MinusData', chartData.datasets[MINUS_DATASET].data);		
@@ -197,6 +200,7 @@ class ChartHandler {
 	} // addData
 
 	clear() {
+		DATA_DATES = [];
 		chartData.labels = [];
 		chartData.datasets[PLUS_DATASET].data = [];
 		chartData.datasets[MINUS_DATASET].data = [];
@@ -246,9 +250,38 @@ $(document).ready(function() {
 		window.chartHandler.update();
 	}); // addRandomData*/
 
+	document.getElementById('removeData').addEventListener('click', function() {
+		if (chartData.labels.length > 0) {
+			// Remove last index of arrays
+			chartData.labels.pop();
+			chartData.datasets[PLUS_DATASET].data.pop();
+			chartData.datasets[MINUS_DATASET].data.pop();
+
+			DATA_DATES = Cookies.getJSON('Data Dates');
+			let labels = Cookies.getJSON('Labels');
+			let plusData = Cookies.getJSON('PlusData');
+			let minusData = Cookies.getJSON('MinusData');
+
+			DATA_DATES.pop();
+			labels.pop();
+			plusData.pop();
+			minusData.pop();
+
+			Cookies.set('Data Dates', DATA_DATES);
+			Cookies.set('Labels', chartData.labels);
+			Cookies.set('PlusData', chartData.datasets[PLUS_DATASET].data);
+			Cookies.set('MinusData', chartData.datasets[MINUS_DATASET].data);
+
+			window.chartHandler.update();
+		} else {
+			DEBUG_LOG('What data are ypu trying to remove???????');
+		}
+	});
+
 	document.getElementById('deleteStoredData').addEventListener('click', function() {
 		if (confirm('Are you sure you want to remove previously saved data?')) {
 			DEBUG_LOG('Removing stored data (cookies)');
+			Cookies.remove('Data Dates');
 			Cookies.remove('Labels');
 			Cookies.remove('PlusData');
 			Cookies.remove('MinusData');
