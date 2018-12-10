@@ -23,7 +23,8 @@ function DEBUG_LOG(string) {
 }
 
 // Constants
-const MAX_DATA_LENGTH = 10;
+const MAX_DATA_LENGTH = 10; // At most 10 days showing in the chart
+const MAX_DATA_INPUT = 15;	// At most 15 +/- in input
 const PLUS_DATASET = 0;
 const MINUS_DATASET = 1;
 const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -129,28 +130,33 @@ class ChartHandler {
 		this.chart.update();
 	} // update
 
+	isValidInput(nrPlus, nrMinus) {
+		// Minor fault handling
+		// We must have any valid data for input to the graph
+		if(!nrPlus || !nrMinus) { // Javascript "truthy"
+			DEBUG_LOG('No valid input data, returning');
+			return false;
+		} else if(nrPlus == 0 && nrMinus == 0) {
+			DEBUG_LOG('No valid input data (nrPlus: 0, nrMinus: 0), returning');
+			return false;
+		} else if(nrPlus < 0 || nrMinus < 0) {
+			DEBUG_LOG('No valid input data (nrPlus < 0 or nrMinus < 0), returning');
+			return false;
+		}
+
+		if(nrPlus > MAX_DATA_INPUT || nrMinus > MAX_DATA_INPUT) {
+			DEBUG_LOG('No valid input data, (nrPlus or nrMinus > MAX_DATA_INPUT(' + MAX_DATA_INPUT + ')), returning');
+			return false;
+		}
+
+		return true;
+	}
+
 	addData(nrPlus, nrMinus) {
 		console.log('[INFO] ##### Entering ChartHandler::addData #####');
 		DEBUG_LOG("User input, Plus: " + nrPlus + " nrMinus: " + nrMinus);
 
-		// Minor fault handling
-		// TODO: Add too high +/- restriction
-		if(nrPlus  < Y_AXES_TICKS_SUGGESTED_MIN ||
-			 nrPlus  > Y_AXES_TICKS_SUGGESTED_MAX ||
-			 nrMinus < Y_AXES_TICKS_SUGGESTED_MIN ||
-			 nrMinus > Y_AXES_TICKS_SUGGESTED_MAX) {
-			DEBUG_LOG('You are adding values outside the suggested range (min: ' + Y_AXES_TICKS_SUGGESTED_MIN + ', max: ' + Y_AXES_TICKS_SUGGESTED_MAX + ')');
-		}
-
-		// We must have any valid data for input to the graph
-		if(!nrPlus || !nrMinus) { // Javascript "truthy"
-			DEBUG_LOG('No valid input data, returning');
-			return;
-		} else if(nrPlus == 0 && nrMinus == 0) {
-			DEBUG_LOG('No valid input data (nrPlus: 0, nrMinus: 0), returning');
-			return;
-		} else if(nrPlus < 0 || nrMinus < 0) {
-			DEBUG_LOG('No valid input data (nrPlus < 0 or nrMinus < 0), returning');
+		if(!this.isValidInput(nrPlus, nrMinus)){
 			return;
 		}
 
