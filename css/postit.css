@@ -9,10 +9,10 @@
 	height: 13vw;
 	display: inline-block;
 	padding: 1%;
-	border: 1px solid #E8E8E8;  
+	border: 0.08vw solid #E8E8E8;
 	border-top: 1vw solid #fdfd86;
 	/* Right bottom corner flap */
-	/* border-bottom-right-radius: 60px 5px; */
+	border-bottom-right-radius: 3vw 0.25vw;
 	/* Fancy color stuff */
 	background: #ffff88; /* Old browsers */
 	background: -moz-linear-gradient(-45deg, #ffff88 81%, #ffff88 82%, #ffff88 82%, #ffffc6 100%); /* FF3.6+ */
@@ -24,21 +24,23 @@
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffff88', endColorstr='#ffffc6',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
 }
 
-/*.postit:after {
+.postit:after {
 	content: "";
-	position:absolute;
-	z-index:-1;
-	right:-0px; bottom:20px;
-	width:200px;
-	height: 25px;
+	position: absolute;
+	z-index: -1;
+	right: -0px;
+	bottom: 1vw;
+	width: 10vw;
+	height: 1.25vw;
 	background: rgba(0, 0, 0, 0.2);
-	box-shadow:2px 15px 5px rgba(0, 0, 0, 0.40);
+	/*        h-offset v-offset blur spread color */
+	box-shadow: 0.05vw 0.75vw 0.25vw rgba(0, 0, 0, 0.40); /* 2px 15px 5px rgba(0, 0, 0, 0.40); */
 	-moz-transform: matrix(-1, -0.1, 0, 1, 0, 0);
 	-webkit-transform: matrix(-1, -0.1, 0, 1, 0, 0);
 	-o-transform: matrix(-1, -0.1, 0, 1, 0, 0);
 	-ms-transform: matrix(-1, -0.1, 0, 1, 0, 0);
 	transform: matrix(-1, -0.1, 0, 1, 0, 0);
-}*/
+}
 
 #postitContainer{
 	display: inline-block;
