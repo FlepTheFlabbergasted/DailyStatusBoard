@@ -32,7 +32,9 @@ const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Frida
 const Y_AXES_TICKS_SUGGESTED_MIN = -5;
 const Y_AXES_TICKS_SUGGESTED_MAX = 5;
 
+// Dates for each data entry
 var DATA_DATES = [];
+// Comment for each data entry
 var DAILY_COMMENTS = [];
 
 // TODO: Needed? Just input the rgb string directly in the chartData?
@@ -79,10 +81,11 @@ class ChartHandler {
 		let minusData = Cookies.getJSON('MinusData');
 
 		if(plusData != undefined && minusData != undefined) {
-			// We retreive DATA_DATES here since getting it if nothing else is defined overwrites it with 'undefined'
+			// We retreive DATA_DATES and DAILY_COMMENTS here since getting it if nothing else is defined overwrites it with 'undefined'
 			DATA_DATES = Cookies.getJSON('Data Dates');
+			DAILY_COMMENTS = Cookies.getJSON('Comments');
 
-			DEBUG_LOG('Initiating chart with previously stored data:\nLabels [' + labels + '], PlusData [' + plusData + '], MinusData [' + minusData + '], Data Dates [' +  DATA_DATES + ']');
+			DEBUG_LOG('Initiating chart with previously stored data:\nLabels [' + labels + '], PlusData [' + plusData + '], MinusData [' + minusData + '], Data Dates [' +  DATA_DATES + '], Comments [' + DAILY_COMMENTS + ']');
 			chartData.labels = labels;
 			chartData.datasets[PLUS_DATASET].data = plusData;
 			chartData.datasets[MINUS_DATASET].data = minusData;
@@ -111,14 +114,7 @@ class ChartHandler {
 		        label: function(tooltipItem, data) {
 		          // return data['datasets'][0]['data'][tooltipItem['index']];
 		          let index = tooltipItem['index'];
-		          console.log("index: " + index);
-		          if(index == 0) {
-		          	return "This is the FIRST one";
-		          } else if(index == 1) {
-		          	return "This is the SECOND one";
-		          } else {
-		          	return "And so on...";
-		          }
+		          return DAILY_COMMENTS[index];
 		        },
 		        afterLabel: function(tooltipItem, data) {
 		          // var dataset = data['datasets'][0];
@@ -176,9 +172,9 @@ class ChartHandler {
 		return true;
 	}
 
-	addData(nrPlus, nrMinus) {
+	addData(nrPlus, nrMinus, comment) {
 		console.log('[INFO] ##### Entering ChartHandler::addData #####');
-		DEBUG_LOG("User input, Plus: " + nrPlus + " nrMinus: " + nrMinus);
+		DEBUG_LOG("User input, Plus: " + nrPlus + " Minus: " + nrMinus + " Comment: " + comment);
 
 		if(!this.isValidInput(nrPlus, nrMinus)){
 			return;
@@ -190,41 +186,48 @@ class ChartHandler {
 			DEBUG_LOG('Dataset data is longer than MAX_DATA_LENGTH (' + MAX_DATA_LENGTH + '), removing first datapoint');
 			// Remove the label first
 			chartData.labels.shift();
+
 			// Remove the first data point
+			DATA_DATES.shift();
 			chartData.datasets[PLUS_DATASET].data.shift();
 			chartData.datasets[MINUS_DATASET].data.shift();
+			DAILY_COMMENTS.shift();
 		}
 
-		DEBUG_LOG('Data Dates: ' + DATA_DATES);
+		DEBUG_LOG('Todays date: ' + new Date().toISOString().slice(0,10));
 		DEBUG_LOG('Label to add: ' + WEEKDAYS[new Date().getDay()]);
 		DEBUG_LOG('Plus data  to add: ' + nrPlus);
 		DEBUG_LOG('Minus data to add: ' + nrMinus);
+		DEBUG_LOG('Comment to add: ' + comment);
 
-		// TODO: Uncomment when not testing
 		// Overwrite data if adding on the same day (gets date as YYYY-MM-DD)
-		// if(DATA_DATES[DATA_DATES.length - 1] == new Date().toISOString().slice(0,10)) {
-		// 	// Remove last index of array
-		// 	DATA_DATES.pop();
-		// 	chartData.labels.pop();
-		// 	chartData.datasets[PLUS_DATASET].data.pop();
-		// 	chartData.datasets[MINUS_DATASET].data.pop();
-		// }
+		if(DATA_DATES[DATA_DATES.length - 1] == new Date().toISOString().slice(0,10)) {
+			// Remove last index of array
+			DATA_DATES.pop();
+			chartData.labels.pop();
+			chartData.datasets[PLUS_DATASET].data.pop();
+			chartData.datasets[MINUS_DATASET].data.pop();
+			DAILY_COMMENTS.pop();
+		}
 		
 		// Add new data
 		DATA_DATES.push(new Date().toISOString().slice(0,10));
 		chartData.labels.push(WEEKDAYS[new Date().getDay()]);
 		chartData.datasets[PLUS_DATASET].data.push(nrPlus);
 		chartData.datasets[MINUS_DATASET].data.push(nrMinus * -1);
+		DAILY_COMMENTS.push(comment);
 
 		// Store Data
 		DEBUG_LOG('Storing Data Dates: ' + DATA_DATES);
 		DEBUG_LOG('Storing labels: ' + chartData.labels);
 		DEBUG_LOG('Storing plus dataset: ' + chartData.datasets[PLUS_DATASET].data);
 		DEBUG_LOG('Storing minus dataset: ' + chartData.datasets[MINUS_DATASET].data);
+		DEBUG_LOG('Storing comment: ' + DAILY_COMMENTS);
 		Cookies.set('Data Dates', DATA_DATES);
 		Cookies.set('Labels', chartData.labels);
 		Cookies.set('PlusData', chartData.datasets[PLUS_DATASET].data);
-		Cookies.set('MinusData', chartData.datasets[MINUS_DATASET].data);		
+		Cookies.set('MinusData', chartData.datasets[MINUS_DATASET].data);
+		Cookies.set('Comments', DAILY_COMMENTS);
 
 		this.update();
 	} // addData
@@ -234,6 +237,7 @@ class ChartHandler {
 		chartData.labels = [];
 		chartData.datasets[PLUS_DATASET].data = [];
 		chartData.datasets[MINUS_DATASET].data = [];
+		DAILY_COMMENTS = [];
 		this.update();
 	}
 
@@ -291,16 +295,19 @@ $(document).ready(function() {
 			let labels = Cookies.getJSON('Labels');
 			let plusData = Cookies.getJSON('PlusData');
 			let minusData = Cookies.getJSON('MinusData');
+			DAILY_COMMENTS = Cookies.getJSON('Comments');
 
 			DATA_DATES.pop();
 			labels.pop();
 			plusData.pop();
 			minusData.pop();
+			DAILY_COMMENTS.pop();
 
 			Cookies.set('Data Dates', DATA_DATES);
 			Cookies.set('Labels', chartData.labels);
 			Cookies.set('PlusData', chartData.datasets[PLUS_DATASET].data);
 			Cookies.set('MinusData', chartData.datasets[MINUS_DATASET].data);
+			Cookies.set('Comments', DAILY_COMMENTS);
 
 			window.chartHandler.update();
 		} else {
@@ -315,6 +322,7 @@ $(document).ready(function() {
 			Cookies.remove('Labels');
 			Cookies.remove('PlusData');
 			Cookies.remove('MinusData');
+			Cookies.remove('Comments');
 			window.chartHandler.clear();
 		} else {
 			// Do nothing!
@@ -326,12 +334,14 @@ $(document).ready(function() {
 
 		let plus = $('#plusInput').val();
 		let minus = $('#minusInput').val();
-		
+		let comment = $('#dailyComment').val();
+
 		// Reset the input
 		$('#plusInput').val(0);
 		$('#minusInput').val(0);
+		$('#dailyComment').val('');
 
-		window.chartHandler.addData(plus, minus);
+		window.chartHandler.addData(plus, minus, comment);
 	}); // submitData
 
 	document.getElementById('plusButton').addEventListener('click', function() {
