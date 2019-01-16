@@ -88,7 +88,17 @@ class ChartHandler {
 			DEBUG_LOG('Initiating chart with previously stored data:\nLabels [' + labels + '], PlusData [' + plusData + '], MinusData [' + minusData + '], Data Dates [' +  DATA_DATES + '], Comments [' + DAILY_COMMENTS + ']');
 			chartData.labels = labels;
 			chartData.datasets[PLUS_DATASET].data = plusData;
-			chartData.datasets[MINUS_DATASET].data = minusData;
+            chartData.datasets[MINUS_DATASET].data = minusData;
+
+			// TODO: How to keep this from happening? I don't want this function here forever?
+			// Previous versions don't contain any comments so we gotta fill up the array
+			if(DAILY_COMMENTS == undefined) {
+				DAILY_COMMENTS = [];
+				DEBUG_LOG("Adding blank comments to graph to compensate for earlier versions");
+				for(let i = 0; i < chartData.datasets[MINUS_DATASET].data.length; i++) {
+					DAILY_COMMENTS.push(" ");
+				}
+			}
 		}
 
 		var ctx = document.getElementById('canvas').getContext('2d');
@@ -106,22 +116,22 @@ class ChartHandler {
 				tooltips: {
 					// mode: 'index',
 					// intersect: false,
-		      callbacks: {
-		        title: function(tooltipItem, data) {
-		          // console.log("You're hovering on index: " + tooltipItem[0]['index']);
-		          return "Comment:";// + data['labels'][tooltipItem[0]['index']];
-		        },
-		        label: function(tooltipItem, data) {
-		          // return data['datasets'][0]['data'][tooltipItem['index']];
-		          let index = tooltipItem['index'];
-		          return DAILY_COMMENTS[index];
-		        },
-		        afterLabel: function(tooltipItem, data) {
-		          // var dataset = data['datasets'][0];
-		          // var percent = Math.round((dataset['data'][tooltipItem['index']] / dataset["_meta"][0]['total']) * 100)
-		          // return '(' + percent + '%)';
-		        }
-		      }
+			      	callbacks: {
+				        title: function(tooltipItem, data) {
+				          // console.log("You're hovering on index: " + tooltipItem[0]['index']);
+				          return "Comment:";// + data['labels'][tooltipItem[0]['index']];
+				        },
+				        label: function(tooltipItem, data) {
+				          // return data['datasets'][0]['data'][tooltipItem['index']];
+				          let index = tooltipItem['index'];
+				          return DAILY_COMMENTS[index];
+				        },
+				        afterLabel: function(tooltipItem, data) {
+				          // var dataset = data['datasets'][0];
+				          // var percent = Math.round((dataset['data'][tooltipItem['index']] / dataset["_meta"][0]['total']) * 100)
+				          // return '(' + percent + '%)';
+				        }
+		      		}
 				},
 				responsive: true,
 	    	maintainAspectRatio: false,
@@ -139,7 +149,7 @@ class ChartHandler {
 							// TODO: Using const vars since I can't figure out how to access these options
 							suggestedMin: Y_AXES_TICKS_SUGGESTED_MIN,
 							suggestedMax: Y_AXES_TICKS_SUGGESTED_MAX,
-           	}
+           				}
 					}]
 				}
 			}
