@@ -25,7 +25,7 @@ function DEBUG_LOG(string) {
 // Constants
 const MAX_DATA_LENGTH = 10; // At most 10 days showing in the chart
 const MAX_DATA_INPUT = 15;	// At most 15 +/- in input
-const PLUS_DATASET = 0;
+const PLUS_DATASET = 0;			// Dataset index
 const MINUS_DATASET = 1;
 const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 // TODO: Remove once figured out how to retreive min/max ticks in chart options
@@ -33,6 +33,7 @@ const Y_AXES_TICKS_SUGGESTED_MIN = -5;
 const Y_AXES_TICKS_SUGGESTED_MAX = 5;
 
 var DATA_DATES = [];
+var DAILY_COMMENTS = [];
 
 // TODO: Needed? Just input the rgb string directly in the chartData?
 window.chartColors = {
@@ -100,8 +101,31 @@ class ChartHandler {
 					display: false,
 				},
 				tooltips: {
-					mode: 'index',
-					intersect: false
+					// mode: 'index',
+					// intersect: false,
+		      callbacks: {
+		        title: function(tooltipItem, data) {
+		          // console.log("You're hovering on index: " + tooltipItem[0]['index']);
+		          return "Comment:";// + data['labels'][tooltipItem[0]['index']];
+		        },
+		        label: function(tooltipItem, data) {
+		          // return data['datasets'][0]['data'][tooltipItem['index']];
+		          let index = tooltipItem['index'];
+		          console.log("index: " + index);
+		          if(index == 0) {
+		          	return "This is the FIRST one";
+		          } else if(index == 1) {
+		          	return "This is the SECOND one";
+		          } else {
+		          	return "And so on...";
+		          }
+		        },
+		        afterLabel: function(tooltipItem, data) {
+		          // var dataset = data['datasets'][0];
+		          // var percent = Math.round((dataset['data'][tooltipItem['index']] / dataset["_meta"][0]['total']) * 100)
+		          // return '(' + percent + '%)';
+		        }
+		      }
 				},
 				responsive: true,
 	    	maintainAspectRatio: false,
@@ -119,7 +143,7 @@ class ChartHandler {
 							// TODO: Using const vars since I can't figure out how to access these options
 							suggestedMin: Y_AXES_TICKS_SUGGESTED_MIN,
 							suggestedMax: Y_AXES_TICKS_SUGGESTED_MAX,
-           				}
+           	}
 					}]
 				}
 			}
@@ -176,15 +200,15 @@ class ChartHandler {
 		DEBUG_LOG('Plus data  to add: ' + nrPlus);
 		DEBUG_LOG('Minus data to add: ' + nrMinus);
 
+		// TODO: Uncomment when not testing
 		// Overwrite data if adding on the same day (gets date as YYYY-MM-DD)
-		if(DATA_DATES[DATA_DATES.length - 1] == new Date().toISOString().slice(0,10)) {
-			// Remove last index of array
-			DATA_DATES.pop();
-			chartData.labels.pop();
-			chartData.datasets[PLUS_DATASET].data.pop();
-			chartData.datasets[MINUS_DATASET].data.pop();
-		}
-		
+		// if(DATA_DATES[DATA_DATES.length - 1] == new Date().toISOString().slice(0,10)) {
+		// 	// Remove last index of array
+		// 	DATA_DATES.pop();
+		// 	chartData.labels.pop();
+		// 	chartData.datasets[PLUS_DATASET].data.pop();
+		// 	chartData.datasets[MINUS_DATASET].data.pop();
+		// }
 		
 		// Add new data
 		DATA_DATES.push(new Date().toISOString().slice(0,10));
