@@ -26,16 +26,18 @@
 		<div id="chartContainer">
 			<canvas id="canvas"></canvas>
 			<div class="flex-container">
-				<input type="number" id="plusInput" value="0"/>
+				<input type="number" class="width-5" id="plusInput" value="0"/>
 				<button id="plusButton">+</button>
-				<input type="number" id="minusInput" value="0"/>
+				<input type="number" class="width-5" id="minusInput" value="0"/>
 				<button id="minusButton">-</button>
 
 				<button id="submitData">Submit Data</button>
 				<!-- <button id="addRandomData">Add Random Data</button> -->
 				<button id="removeData">Remove Data</button>
 				<button id="deleteStoredData">Delete Stored Data</button>
-				<input type="text" id="dailyComment" placeholder="Comment for the day...">
+			</div>
+			<div class="flex-container">
+				<textarea id="dailyComment" placeholder="Comment for the day..."></textarea>
 			</div>
 		</div>
 
