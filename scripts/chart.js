@@ -344,14 +344,14 @@ $(document).ready(function() {
 
 		let plus = $('#plusInput').val();
 		let minus = $('#minusInput').val();
-		let comment = $('#dailyComment').val();
 
 		// Reset the input
 		$('#plusInput').val(0);
 		$('#minusInput').val(0);
-		$('#dailyComment').val('');
 
-		window.chartHandler.addData(plus, minus, comment);
+		let commentOfTheDay = prompt("Comment of the Day");
+
+		window.chartHandler.addData(plus, minus, commentOfTheDay);
 	}); // submitData
 
 	document.getElementById('plusButton').addEventListener('click', function() {
