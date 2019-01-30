@@ -363,11 +363,27 @@ $(document).ready(function() {
 
 		let commentOfTheDay;
 		if(plus == 0 && minus == 0){
-			commentOfTheDay = "";
+			commentOfTheDay = " ";
 		}else{
-			commentOfTheDay = prompt("Comment of the Day");
+			commentOfTheDay = prompt("Comment of the Day", getDefaultCommentOfTheDay(plus, minus));
 		}
 		window.chartHandler.addData(plus, minus, commentOfTheDay);
+	}
+
+	function getDefaultCommentOfTheDay(plus, minus){
+		let commentOfTheDay;
+		if(plus > minus){
+			if(minus == 0){
+				commentOfTheDay = "Euphoric Day";
+			}else{
+				commentOfTheDay = "Good Day";
+			}
+		}else if(minus > plus){
+			commentOfTheDay = "Bad Day";
+		}else{
+			commentOfTheDay = "Neutral Day";
+		}
+		return commentOfTheDay;
 	}
 
 	function addToPlusInput(addedValue) {
@@ -401,7 +417,7 @@ $(document).ready(function() {
 					addToPlusInput(1);
 				}
 				break;
-			case 69/*down-arrow*/:
+			case 69/*e*/:
 				if(e.shiftKey){
 					addToMinusInput(-1);
 				}else{
