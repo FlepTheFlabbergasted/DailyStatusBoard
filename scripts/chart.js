@@ -187,7 +187,7 @@ class ChartHandler {
 		DEBUG_LOG("User input, Plus: " + nrPlus + " Minus: " + nrMinus + " Comment: " + comment);
 
 		if(!this.isValidInput(nrPlus, nrMinus)){
-			return;
+			return false;
 		}
 
 		// Only show the latest data inputs
@@ -240,6 +240,7 @@ class ChartHandler {
 		Cookies.set('Comments', DAILY_COMMENTS);
 
 		this.update();
+		return true;
 	} // addData
 
 	clear() {
@@ -250,7 +251,6 @@ class ChartHandler {
 		DAILY_COMMENTS = [];
 		this.update();
 	}
-
 } // class ChartHandler
 
 window.onload = function() {
@@ -340,6 +340,18 @@ $(document).ready(function() {
 	});
 
 	document.getElementById('submitData').addEventListener('click', function() {
+		submitData();
+	}); // submitData
+
+	document.getElementById('plusButton').addEventListener('click', function() {
+		addToPlusInput(1);
+	});
+
+	document.getElementById('minusButton').addEventListener('click', function() {
+		addToMinusInput(1);
+	});
+
+	function submitData(){
 		console.log('[INFO] ##### Entering function submitData #####');
 
 		let plus = $('#plusInput').val();
@@ -349,22 +361,64 @@ $(document).ready(function() {
 		$('#plusInput').val(0);
 		$('#minusInput').val(0);
 
-		let commentOfTheDay = prompt("Comment of the Day");
-
+		let commentOfTheDay;
+		if(plus == 0 && minus == 0){
+			commentOfTheDay = "";
+		}else{
+			commentOfTheDay = prompt("Comment of the Day");
+		}
 		window.chartHandler.addData(plus, minus, commentOfTheDay);
-	}); // submitData
+	}
 
-	document.getElementById('plusButton').addEventListener('click', function() {
+	function addToPlusInput(addedValue) {
 		let nrPlus = $('#plusInput').val();
-		nrPlus++;
+		if(nrPlus == 0 && addedValue < 0){
+			return;
+		}
+		nrPlus = parseInt(nrPlus) + parseInt(addedValue);
 		$('#plusInput').val(nrPlus);
-	});
+	}
 
-	document.getElementById('minusButton').addEventListener('click', function() {
+	function addToMinusInput(addedValue) {
 		let nrMinus = $('#minusInput').val();
-		nrMinus++;
+		if(nrMinus == 0 && addedValue < 0){
+			return;
+		}
+		nrMinus = parseInt(nrMinus) + parseInt(addedValue);
 		$('#minusInput').val(nrMinus);
-	});
+	}
+
+	/* Handler for shortcuts, currently 'w' and 'shift+w'
+	 * to increase/decrease plusInput, 'e' and 'shift+e'
+	 * to increase/decrease minusInput, and 's' to submitData.
+	 */
+	function doc_keyUp(e) {
+		switch(e.keyCode) {
+			case 87/*w*/:
+			    if(e.shiftKey){
+					addToPlusInput(-1);
+				}else{
+					addToPlusInput(1);
+				}
+				break;
+			case 69/*down-arrow*/:
+				if(e.shiftKey){
+					addToMinusInput(-1);
+				}else{
+					addToMinusInput(1);
+				}
+				break;
+			// shortcut 's' will submitData
+			case 13/*enter-key*/:
+			case 83/*s*/:
+				submitData();
+				break;
+			default:
+				break;
+		}
+	}
+
+	document.addEventListener('keyup', doc_keyUp, false);
 
 	// document.getElementById('randomizeData').addEventListener('click', function() {
 	// 	console.log('[INFO] Entering function randomizeData');
