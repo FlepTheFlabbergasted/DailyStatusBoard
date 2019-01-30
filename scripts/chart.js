@@ -32,6 +32,9 @@ const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Frida
 const Y_AXES_TICKS_SUGGESTED_MIN = -5;
 const Y_AXES_TICKS_SUGGESTED_MAX = 5;
 
+var secretCode = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
+var secretCodeIndex = 0;
+
 // Dates for each data entry
 var DATA_DATES = [];
 // Comment for each data entry
@@ -351,6 +354,9 @@ $(document).ready(function() {
 		addToMinusInput(1);
 	});
 
+	document.getElementById('plusInput').readOnly = true;
+	document.getElementById('minusInput').readOnly = true;
+
 	function submitData(){
 		console.log('[INFO] ##### Entering function submitData #####');
 
@@ -431,6 +437,22 @@ $(document).ready(function() {
 				break;
 			default:
 				break;
+		}
+		checkForCode(e.keyCode);
+	}
+
+	function checkForCode(input){
+		if(input == secretCode[secretCodeIndex]){
+			secretCodeIndex++;
+			if(secretCodeIndex == secretCode.length){
+				document.getElementById('secretSound').preload="auto";
+				document.getElementById('secretSound').volume = 0.1;
+				document.getElementById('secretSound').play();
+				alert("Congrats u found code!!!");
+				secretCodeIndex = 0;
+			}
+		}else{
+			secretCodeIndex = 0;
 		}
 	}
 
