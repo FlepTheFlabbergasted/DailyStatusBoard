@@ -106,13 +106,6 @@ class ChartHandler {
 					DAILY_COMMENTS.push(" ");
 				}
 			}
-			if(chartData.datasets[MINUS_DATASET].data.length > 0){
-				let plusArray = chartData.datasets[PLUS_DATASET].data;
-				let currentDayPlus = plusArray[plusArray.length - 1];
-				let minusArray = chartData.datasets[MINUS_DATASET].data;
-				let currentDayMinus = Math.abs(minusArray[minusArray.length - 1]);
-				window.statsHandler.setData(parseInt(ALL_TIME_STATS[PLUS_INDEX]) + parseInt(currentDayPlus), parseInt(ALL_TIME_STATS[MINUS_INDEX]) + parseInt(currentDayMinus));
-			}
 		}
 
 		var ctx = document.getElementById('canvas').getContext('2d');
@@ -197,19 +190,6 @@ class ChartHandler {
 		return true;
 	}
 
-	setAllTimeStatsCookie(plus, minus){
-		let currentCookie = Cookies.getJSON('AllTimeStatsData');
-		if(currentCookie != undefined){
-			ALL_TIME_STATS[PLUS_INDEX] = parseInt(currentCookie[PLUS_INDEX]) + parseInt(plus);
-			ALL_TIME_STATS[MINUS_INDEX] = parseInt(currentCookie[MINUS_INDEX]) + parseInt(minus);
-		}else{
-			ALL_TIME_STATS[PLUS_INDEX] = parseInt(plus);
-			ALL_TIME_STATS[MINUS_INDEX] = parseInt(minus);
-		}
-		DEBUG_LOG('Storing AllTimeStats data set: ' + ALL_TIME_STATS);
-		Cookies.set('AllTimeStatsData', ALL_TIME_STATS);
-	}
-
 	addData(nrPlus, nrMinus, comment) {
 		console.log('[INFO] ##### Entering ChartHandler::addData #####');
 		DEBUG_LOG("User input, Plus: " + nrPlus + " Minus: " + nrMinus + " Comment: " + comment);
@@ -239,24 +219,17 @@ class ChartHandler {
 		DEBUG_LOG('Comment to add: ' + comment);
 
 		// Overwrite data if adding on the same day (gets date as YYYY-MM-DD)
-		//if(DATA_DATES[DATA_DATES.length - 1] == new Date().toISOString().slice(0,10)) {
+		if(DATA_DATES[DATA_DATES.length - 1] == new Date().toISOString().slice(0,10)) {
 			// Remove last index of array
-			//DATA_DATES.pop();
-			//chartData.labels.pop();
-			//chartData.datasets[PLUS_DATASET].data.pop();
-			//chartData.datasets[MINUS_DATASET].data.pop();
-			//DAILY_COMMENTS.pop();
-			//Cookies.set('AllTimeStatsData', ALL_TIME_STATS);
-		//}else{
-			if(chartData.datasets[MINUS_DATASET].data.length > 0){
-				let plusArray = chartData.datasets[PLUS_DATASET].data;
-				let minusArray = chartData.datasets[MINUS_DATASET].data;
-				this.setAllTimeStatsCookie(plusArray[plusArray.length - 1], Math.abs(minusArray[minusArray.length - 1]));
-			}
-		//}
+			DATA_DATES.pop();
+			chartData.labels.pop();
+			let plusToRemove = chartData.datasets[PLUS_DATASET].data.pop();
+			let minusToRemove = Math.abs(chartData.datasets[MINUS_DATASET].data.pop());
+			this.setAllTimeStatsCookie(-plusToRemove, -minusToRemove);
+			DAILY_COMMENTS.pop();
+		}
 
-		// Update the statsHandler today's data
-		window.statsHandler.setData(parseInt(ALL_TIME_STATS[PLUS_INDEX]) + parseInt(nrPlus), parseInt(ALL_TIME_STATS[MINUS_INDEX]) + parseInt(nrMinus));
+		this.setAllTimeStatsCookie(nrPlus, nrMinus);
 
 		// Add new data
 		DATA_DATES.push(new Date().toISOString().slice(0,10));
@@ -281,6 +254,20 @@ class ChartHandler {
 		return true;
 	} // addData
 
+	setAllTimeStatsCookie(plus, minus){
+		let currentCookie = Cookies.getJSON('AllTimeStatsData');
+		let updatedCookie = [2];
+		if(currentCookie != undefined){
+			updatedCookie[PLUS_INDEX] = parseInt(currentCookie[PLUS_INDEX]) + parseInt(plus);
+			updatedCookie[MINUS_INDEX] = parseInt(currentCookie[MINUS_INDEX]) + parseInt(minus);
+		}else{
+			updatedCookie[PLUS_INDEX] = parseInt(plus);
+			updatedCookie[MINUS_INDEX] = parseInt(minus);
+		}
+		DEBUG_LOG('Storing AllTimeStats data set: ' + updatedCookie);
+		Cookies.set('AllTimeStatsData', updatedCookie);
+	}
+
 	clear() {
 		DATA_DATES = [];
 		chartData.labels = [];
@@ -296,10 +283,11 @@ window.onload = function() {
 	// called using 'window.chartHandler'
 	let allTimeStats = Cookies.getJSON('AllTimeStatsData');
 	if(allTimeStats != undefined){
-		ALL_TIME_STATS[PLUS_INDEX] = parseInt(allTimeStats[PLUS_INDEX]);
-		ALL_TIME_STATS[MINUS_INDEX] = parseInt(allTimeStats[MINUS_INDEX]);
+		window.statsHandler = new StatsHandler(allTimeStats[PLUS_INDEX], allTimeStats[MINUS_INDEX]);
+	}else{
+		Cookies.set('AllTimeStatsData', [0, 0]);
+		window.statsHandler = new StatsHandler(0, 0);
 	}
-	window.statsHandler = new StatsHandler(ALL_TIME_STATS[PLUS_INDEX], ALL_TIME_STATS[MINUS_INDEX]);
 	window.chartHandler = new ChartHandler();
 }; // window.onload
 
@@ -353,8 +341,8 @@ $(document).ready(function() {
 
 			DATA_DATES.pop();
 			labels.pop();
-			plusData.pop();
-			minusData.pop();
+			let removedPlusData = plusData.pop();
+			let removedMinusData = Math.abs(minusData.pop());
 			DAILY_COMMENTS.pop();
 
 			Cookies.set('Data Dates', DATA_DATES);
@@ -364,7 +352,12 @@ $(document).ready(function() {
 			Cookies.set('Comments', DAILY_COMMENTS);
 
 			window.chartHandler.update();
-			window.statsHandler.setData(ALL_TIME_STATS[PLUS_INDEX], ALL_TIME_STATS[MINUS_INDEX]);
+			window.chartHandler.setAllTimeStatsCookie(-removedPlusData, -removedMinusData);
+
+			let allTimeStatsData = Cookies.getJSON('AllTimeStatsData');
+			if(allTimeStatsData != undefined){
+				window.statsHandler.setData(Cookies.getJSON('AllTimeStatsData')[PLUS_INDEX], Cookies.getJSON('AllTimeStatsData')[MINUS_INDEX]);
+			}
 		} else {
 			DEBUG_LOG('What data are ypu trying to remove???????');
 		}
@@ -378,7 +371,7 @@ $(document).ready(function() {
 			Cookies.remove('PlusData');
 			Cookies.remove('MinusData');
 			Cookies.remove('Comments');
-			Cookies.remove('AllTimeStatsData');
+			Cookies.set('AllTimeStatsData', [0, 0]);
 			window.chartHandler.clear();
 			window.statsHandler.setData(0, 0);
 		} else {
@@ -401,6 +394,13 @@ $(document).ready(function() {
 	// Toggles view when clicking the two canvases
 	$(document).ready(function() {
 		$('#canvas').click(function() {
+			// Update the statsHandler today's data
+			let allTimeStatsData = Cookies.getJSON('AllTimeStatsData');
+			if(allTimeStatsData != undefined){
+				window.statsHandler.setData(allTimeStatsData[PLUS_INDEX], allTimeStatsData[MINUS_INDEX]);
+			}else{
+				window.statsHandler.setData(0, 0);
+			}
 			$('#statsCanvas').toggle('fast');
 			$('#canvas').toggle('fast');
 			$('#postitContainer').toggle('fast');
