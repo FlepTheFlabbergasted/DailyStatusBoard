@@ -394,32 +394,33 @@ $(document).ready(function() {
 	// Toggles view when clicking the two canvases
 	$(document).ready(function() {
 		$('#canvas').click(function() {
-			// Update the statsHandler today's data
-			let allTimeStatsData = Cookies.getJSON('AllTimeStatsData');
-			if(allTimeStatsData != undefined){
-				window.statsHandler.setData(allTimeStatsData[PLUS_INDEX], allTimeStatsData[MINUS_INDEX]);
-			}else{
-				window.statsHandler.setData(0, 0);
-			}
-			$('#statsCanvas').toggle('fast');
-			$('#canvas').toggle('fast');
-			$('#postitContainer').toggle('fast');
-			$('#flexContainer').toggle('fast');
+			toggleView();
 		});
 	});
 
 	$(document).ready(function() {
 		$('#statsCanvas').click(function() {
-			$('#statsCanvas').toggle('fast');
-			$('#canvas').toggle('fast');
-			$('#postitContainer').toggle('fast');
-			$('#flexContainer').toggle('fast');
+			toggleView();
 		});
 	});
 
 	document.getElementById('plusInput').readOnly = true;
 	document.getElementById('minusInput').readOnly = true;
 	document.getElementById("statsCanvas").style.display = "none";
+
+	function toggleView(){
+		// Update the statsHandler today's data
+		let allTimeStatsData = Cookies.getJSON('AllTimeStatsData');
+		if(allTimeStatsData != undefined){
+			window.statsHandler.setData(allTimeStatsData[PLUS_INDEX], allTimeStatsData[MINUS_INDEX]);
+		}else{
+			window.statsHandler.setData(0, 0);
+		}
+		$('#statsCanvas').toggle('fast');
+		$('#canvas').toggle('fast');
+		$('#postitContainer').toggle('fast');
+		$('#flexContainer').toggle('fast');
+	}
 
 	function submitData(){
 		console.log('[INFO] ##### Entering function submitData #####');
@@ -479,28 +480,36 @@ $(document).ready(function() {
 	 * to increase/decrease minusInput, and 's' to submitData.
 	 */
 	function doc_keyUp(e) {
-		switch(e.keyCode) {
-			case 87/*w*/:
-			    if(e.shiftKey){
-					addToPlusInput(-1);
-				}else{
-					addToPlusInput(1);
-				}
-				break;
-			case 69/*e*/:
-				if(e.shiftKey){
-					addToMinusInput(-1);
-				}else{
-					addToMinusInput(1);
-				}
-				break;
-			// shortcut 's' will submitData
-			case 13/*enter-key*/:
-			case 83/*s*/:
-				submitData();
-				break;
-			default:
-				break;
+		// Do not allow editing if in the wrong view
+		if(document.getElementById("canvas").style.display != "none"){
+			switch(e.keyCode) {
+				case 87/*w*/:
+					if(e.shiftKey){
+						addToPlusInput(-1);
+					}else{
+						addToPlusInput(1);
+					}
+					break;
+				case 69/*e*/:
+					if(e.shiftKey){
+						addToMinusInput(-1);
+					}else{
+						addToMinusInput(1);
+					}
+					break;
+				// shortcut 's' will submitData
+				case 13/*enter-key*/:
+				case 83/*s*/:
+					submitData();
+					break;
+				default:
+					break;
+			}
+		}
+
+		// Toggle view with 'r'
+		if(e.keyCode == 82/*r*/){
+			toggleView();
 		}
 		checkForCode(e.keyCode);
 	}
