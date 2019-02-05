@@ -2,15 +2,15 @@
 // https://www.chartjs.org/samples/latest/charts/bar/stacked.html
 
 // Take user input for histogram and append to array/list
-// Data consists of nr of + and - as well as date 
-	// Update graphicly when pressing +/- ?
+// Data consists of number of + and - as well as date 
+	// Update graphically when pressing +/- ?
 
 // When user presses "commit" update the histogram with added data
 // Save the array with data to file/in Chrome
 
 // Add post it notes...
 
-// TODO: Remove, initalialy used when debugging without user input
+// TODO: Remove, initially used when debugging without user input
 function random(){
 	return Math.ceil(Math.random() * 10 + 1);
 }
@@ -30,7 +30,7 @@ const MINUS_DATASET = 1;
 const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const PLUS_INDEX = 0;
 const MINUS_INDEX = 1;
-// TODO: Remove once figured out how to retreive min/max ticks in chart options
+// TODO: Remove once figured out how to retrieve min/max ticks in chart options
 const Y_AXES_TICKS_SUGGESTED_MIN = -5;
 const Y_AXES_TICKS_SUGGESTED_MAX = 5;
 
@@ -41,8 +41,6 @@ var secretCodeIndex = 0;
 var DATA_DATES = [];
 // Comment for each data entry
 var DAILY_COMMENTS = [];
-
-var ALL_TIME_STATS = [0, 0];
 
 // TODO: Needed? Just input the rgb string directly in the chartData?
 window.chartColors = {
@@ -59,7 +57,7 @@ window.chartColors = {
 
 /**
  * Data for the displayed bar chart, this variable is used when updating
- * the chart. Initialy start with no labels and no data that later gets added
+ * the chart. Initially start with no labels and no data that later gets added
  * from user input. 
  */
 var chartData = {
@@ -88,7 +86,7 @@ class ChartHandler {
 		let minusData = Cookies.getJSON('MinusData');
 
 		if(plusData != undefined && minusData != undefined) {
-			// We retreive DATA_DATES and DAILY_COMMENTS here since getting it if nothing else is defined overwrites it with 'undefined'
+			// We retrieve DATA_DATES and DAILY_COMMENTS here since getting it if nothing else is defined overwrites it with 'undefined'
 			DATA_DATES = Cookies.getJSON('Data Dates');
 			DAILY_COMMENTS = Cookies.getJSON('Comments');
 
@@ -258,11 +256,12 @@ class ChartHandler {
 		let currentCookie = Cookies.getJSON('AllTimeStatsData');
 		let updatedCookie = [2];
 		if(currentCookie != undefined){
-			updatedCookie[PLUS_INDEX] = parseInt(currentCookie[PLUS_INDEX]) + parseInt(plus);
-			updatedCookie[MINUS_INDEX] = parseInt(currentCookie[MINUS_INDEX]) + parseInt(minus);
+			updatedCookie[PLUS_INDEX] = Math.max(0, parseInt(currentCookie[PLUS_INDEX]) + parseInt(plus));
+			updatedCookie[MINUS_INDEX] = Math.max(0, parseInt(currentCookie[MINUS_INDEX]) + parseInt(minus));
+
 		}else{
-			updatedCookie[PLUS_INDEX] = parseInt(plus);
-			updatedCookie[MINUS_INDEX] = parseInt(minus);
+			updatedCookie[PLUS_INDEX] = parseInt(0);
+			updatedCookie[MINUS_INDEX] = parseInt(0);
 		}
 		DEBUG_LOG('Storing AllTimeStats data set: ' + updatedCookie);
 		Cookies.set('AllTimeStatsData', updatedCookie);
