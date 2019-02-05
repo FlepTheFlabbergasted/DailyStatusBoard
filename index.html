@@ -15,6 +15,7 @@
 	<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 
 	<!-- Local -->
+	<script type="text/javascript" src="scripts/stats.js"></script>
 	<script type="text/javascript" src="scripts/chart.js"></script>
 	<script type="text/javascript" src="scripts/dragndrop.js"></script>
 	<link rel="stylesheet" type="text/css" href="css/general.css">
@@ -26,7 +27,8 @@
 	<div class="row">
 		<div id="chartContainer">
 			<canvas id="canvas"></canvas>
-			<div class="flex-container">
+			<canvas id="statsCanvas"></canvas>
+			<div id="flexContainer" class="flex-container">
 				<input type="number" class="width-5" id="plusInput" value="0"/>
 				<button id="plusButton">+</button>
 				<input type="number" class="width-5" id="minusInput" value="0"/>
@@ -36,7 +38,6 @@
 				<!-- <button id="addRandomData">Add Random Data</button> -->
 				<button id="removeData">Remove Data</button>
 				<button id="deleteStoredData">Delete Stored Data</button>
-				<button id="allTimeStats">All-time Stats</button>
 			</div>
 		</div>
 

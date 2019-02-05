@@ -1,12 +1,5 @@
 
 // https://www.chartjs.org/samples/latest/charts/bar/stacked.html
-const DEBUG = true;
-function DEBUG_LOG(string) {
-	if(DEBUG == true) {
-		console.log('[DEBUG] ' + string);
-	}
-}
-
 // TODO: Needed? Just input the rgb string directly in the chartData?
 window.chartColors = {
 	red: 'rgb(220, 20, 60)',
@@ -40,17 +33,9 @@ var statsChartData = {
 }; // statsChartData
 
 class StatsHandler {
-	constructor() {
+	constructor(plus, minus) {
 		console.log('[INFO] ##### Entering StatsHandler::constructor #####');
-
-		let allTimeStatsData = Cookies.getJSON('AllTimeStatsAndCurrentDayData');
-
-		if(allTimeStatsData != undefined) {
-
-			DEBUG_LOG('Initiating chart with previously stored data:\nPlusData [' + allTimeStatsData + ']');
-			//statsChartData.labels = ['Plus', 'Minus'];
-			statsChartData.datasets[0].data = allTimeStatsData;
-		}
+		statsChartData.datasets[0].data = [plus, minus];
 
 		var ctx = document.getElementById('statsCanvas').getContext('2d');
 		this.chart = new Chart(ctx, {
@@ -85,7 +70,7 @@ class StatsHandler {
 		      		}
 				},
 				responsive: true,
-	    	maintainAspectRatio: false,
+				maintainAspectRatio: false,
 				scales: {
 					xAxes: [{
 						stacked: true,
@@ -108,19 +93,12 @@ class StatsHandler {
 		}); // window.chart
 	} // constructor
 
+	setData(plus, minus){
+		statsChartData.datasets[0].data = [plus, minus];
+		this.chart.update();
+	}
+
 	update() {
 		this.chart.update();
 	} // update
 } // class ChartHandler
-
-window.onload = function() {
-	// Create new ChartHandler to control the chart, all further operations will be 
-	// called using 'window.chartHandler'
-	window.statsHandler = new StatsHandler();
-}; // window.onload
-
-$(document).ready(function() {
-	document.getElementById('dailyStatusBoard').addEventListener('click', function() {
-		window.open("index.html", "_self");
-	});
-}); // $(document).ready(function() {

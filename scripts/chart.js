@@ -28,6 +28,8 @@ const MAX_DATA_INPUT = 15;	// At most 15 +/- in input
 const PLUS_DATASET = 0;			// Dataset index
 const MINUS_DATASET = 1;
 const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const PLUS_INDEX = 0;
+const MINUS_INDEX = 1;
 // TODO: Remove once figured out how to retreive min/max ticks in chart options
 const Y_AXES_TICKS_SUGGESTED_MIN = -5;
 const Y_AXES_TICKS_SUGGESTED_MAX = 5;
@@ -104,17 +106,17 @@ class ChartHandler {
 					DAILY_COMMENTS.push(" ");
 				}
 			}
-		}
-
-		let allTimeStats = Cookies.getJSON('AllTimeStatsData');
-		if(allTimeStats != undefined){
-			ALL_TIME_STATS[0] = parseInt(allTimeStats[0]);
-			ALL_TIME_STATS[1] = parseInt(allTimeStats[1]);
-		}else{
-			Cookies.set('AllTimeStatsData', ALL_TIME_STATS);
+			if(chartData.datasets[MINUS_DATASET].data.length > 0){
+				let plusArray = chartData.datasets[PLUS_DATASET].data;
+				let currentDayPlus = plusArray[plusArray.length - 1];
+				let minusArray = chartData.datasets[MINUS_DATASET].data;
+				let currentDayMinus = Math.abs(minusArray[minusArray.length - 1]);
+				window.statsHandler.setData(parseInt(ALL_TIME_STATS[PLUS_INDEX]) + parseInt(currentDayPlus), parseInt(ALL_TIME_STATS[MINUS_INDEX]) + parseInt(currentDayMinus));
+			}
 		}
 
 		var ctx = document.getElementById('canvas').getContext('2d');
+
 		this.chart = new Chart(ctx, {
 			type: 'bar',
 			data: chartData,
@@ -147,7 +149,7 @@ class ChartHandler {
 		      		}
 				},
 				responsive: true,
-	    	maintainAspectRatio: false,
+				maintainAspectRatio: false,
 				scales: {
 					xAxes: [{
 						stacked: true,
@@ -195,14 +197,14 @@ class ChartHandler {
 		return true;
 	}
 
-	setCookies(plus, minus){
+	setAllTimeStatsCookie(plus, minus){
 		let currentCookie = Cookies.getJSON('AllTimeStatsData');
 		if(currentCookie != undefined){
-			ALL_TIME_STATS[0] = parseInt(currentCookie[0]) + parseInt(plus);
-			ALL_TIME_STATS[1] = parseInt(currentCookie[1]) + parseInt(minus);
+			ALL_TIME_STATS[PLUS_INDEX] = parseInt(currentCookie[PLUS_INDEX]) + parseInt(plus);
+			ALL_TIME_STATS[MINUS_INDEX] = parseInt(currentCookie[MINUS_INDEX]) + parseInt(minus);
 		}else{
-			ALL_TIME_STATS[0] = parseInt(plus);
-			ALL_TIME_STATS[1] = parseInt(minus);
+			ALL_TIME_STATS[PLUS_INDEX] = parseInt(plus);
+			ALL_TIME_STATS[MINUS_INDEX] = parseInt(minus);
 		}
 		DEBUG_LOG('Storing AllTimeStats data set: ' + ALL_TIME_STATS);
 		Cookies.set('AllTimeStatsData', ALL_TIME_STATS);
@@ -237,20 +239,25 @@ class ChartHandler {
 		DEBUG_LOG('Comment to add: ' + comment);
 
 		// Overwrite data if adding on the same day (gets date as YYYY-MM-DD)
-		if(DATA_DATES[DATA_DATES.length - 1] == new Date().toISOString().slice(0,10)) {
+		//if(DATA_DATES[DATA_DATES.length - 1] == new Date().toISOString().slice(0,10)) {
 			// Remove last index of array
-			DATA_DATES.pop();
-			chartData.labels.pop();
-			chartData.datasets[PLUS_DATASET].data.pop();
-			chartData.datasets[MINUS_DATASET].data.pop();
-			DAILY_COMMENTS.pop();
-			Cookies.set('AllTimeStatsData', ALL_TIME_STATS);
-		}else{
+			//DATA_DATES.pop();
+			//chartData.labels.pop();
+			//chartData.datasets[PLUS_DATASET].data.pop();
+			//chartData.datasets[MINUS_DATASET].data.pop();
+			//DAILY_COMMENTS.pop();
+			//Cookies.set('AllTimeStatsData', ALL_TIME_STATS);
+		//}else{
 			if(chartData.datasets[MINUS_DATASET].data.length > 0){
-				this.setCookies(chartData.datasets[PLUS_DATASET].data[chartData.datasets[PLUS_DATASET].data.length - 1], Math.abs(chartData.datasets[MINUS_DATASET].data[chartData.datasets[MINUS_DATASET].data.length - 1]));
+				let plusArray = chartData.datasets[PLUS_DATASET].data;
+				let minusArray = chartData.datasets[MINUS_DATASET].data;
+				this.setAllTimeStatsCookie(plusArray[plusArray.length - 1], Math.abs(minusArray[minusArray.length - 1]));
 			}
-		}
-		
+		//}
+
+		// Update the statsHandler today's data
+		window.statsHandler.setData(parseInt(ALL_TIME_STATS[PLUS_INDEX]) + parseInt(nrPlus), parseInt(ALL_TIME_STATS[MINUS_INDEX]) + parseInt(nrMinus));
+
 		// Add new data
 		DATA_DATES.push(new Date().toISOString().slice(0,10));
 		chartData.labels.push(WEEKDAYS[new Date().getDay()]);
@@ -287,6 +294,12 @@ class ChartHandler {
 window.onload = function() {
 	// Create new ChartHandler to control the chart, all further operations will be 
 	// called using 'window.chartHandler'
+	let allTimeStats = Cookies.getJSON('AllTimeStatsData');
+	if(allTimeStats != undefined){
+		ALL_TIME_STATS[PLUS_INDEX] = parseInt(allTimeStats[PLUS_INDEX]);
+		ALL_TIME_STATS[MINUS_INDEX] = parseInt(allTimeStats[MINUS_INDEX]);
+	}
+	window.statsHandler = new StatsHandler(ALL_TIME_STATS[PLUS_INDEX], ALL_TIME_STATS[MINUS_INDEX]);
 	window.chartHandler = new ChartHandler();
 }; // window.onload
 
@@ -351,6 +364,7 @@ $(document).ready(function() {
 			Cookies.set('Comments', DAILY_COMMENTS);
 
 			window.chartHandler.update();
+			window.statsHandler.setData(ALL_TIME_STATS[PLUS_INDEX], ALL_TIME_STATS[MINUS_INDEX]);
 		} else {
 			DEBUG_LOG('What data are ypu trying to remove???????');
 		}
@@ -364,7 +378,9 @@ $(document).ready(function() {
 			Cookies.remove('PlusData');
 			Cookies.remove('MinusData');
 			Cookies.remove('Comments');
+			Cookies.remove('AllTimeStatsData');
 			window.chartHandler.clear();
+			window.statsHandler.setData(0, 0);
 		} else {
 			// Do nothing!
 		}
@@ -382,21 +398,28 @@ $(document).ready(function() {
 		addToMinusInput(1);
 	});
 
-	document.getElementById('allTimeStats').addEventListener('click', function() {
-		let allTimeStatsAndCurrentDay = [2];
-		if(DATA_DATES[DATA_DATES.length - 1] == new Date().toISOString().slice(0,10)){
-			allTimeStatsAndCurrentDay[0] = parseInt(ALL_TIME_STATS[0]) + parseInt(chartData.datasets[PLUS_DATASET].data[chartData.datasets[PLUS_DATASET].data.length - 1]);
-			allTimeStatsAndCurrentDay[1] = parseInt(ALL_TIME_STATS[1]) + Math.abs(parseInt(chartData.datasets[MINUS_DATASET].data[chartData.datasets[MINUS_DATASET].data.length - 1]));
-		}else{
-			allTimeStatsAndCurrentDay[0] = parseInt(ALL_TIME_STATS[0]);
-			allTimeStatsAndCurrentDay[1] = parseInt(ALL_TIME_STATS[1]);
-		}
-		Cookies.set('AllTimeStatsAndCurrentDayData', allTimeStatsAndCurrentDay);
-		window.open("all_time_stats.html", "_self");
+	// Toggles view when clicking the two canvases
+	$(document).ready(function() {
+		$('#canvas').click(function() {
+			$('#statsCanvas').toggle('fast');
+			$('#canvas').toggle('fast');
+			$('#postitContainer').toggle('fast');
+			$('#flexContainer').toggle('fast');
+		});
+	});
+
+	$(document).ready(function() {
+		$('#statsCanvas').click(function() {
+			$('#statsCanvas').toggle('fast');
+			$('#canvas').toggle('fast');
+			$('#postitContainer').toggle('fast');
+			$('#flexContainer').toggle('fast');
+		});
 	});
 
 	document.getElementById('plusInput').readOnly = true;
 	document.getElementById('minusInput').readOnly = true;
+	document.getElementById("statsCanvas").style.display = "none";
 
 	function submitData(){
 		console.log('[INFO] ##### Entering function submitData #####');

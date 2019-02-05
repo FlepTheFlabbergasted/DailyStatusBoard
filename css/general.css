@@ -120,10 +120,3 @@ button:hover{
 #minusButton:hover {
 	background: rgb(175, 20, 60);
 }
-
-#statsContainer {
-	display: inline-block;
-	float: left;
-	width: 49vw;
-	height: 95%; /* 100% and you can't see the underneath controls for the chart */
-}
