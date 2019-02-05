@@ -40,6 +40,8 @@ var DATA_DATES = [];
 // Comment for each data entry
 var DAILY_COMMENTS = [];
 
+var ALL_TIME_STATS = [0, 0];
+
 // TODO: Needed? Just input the rgb string directly in the chartData?
 window.chartColors = {
 	red: 'rgb(220, 20, 60)',
@@ -102,6 +104,14 @@ class ChartHandler {
 					DAILY_COMMENTS.push(" ");
 				}
 			}
+		}
+
+		let allTimeStats = Cookies.getJSON('AllTimeStatsData');
+		if(allTimeStats != undefined){
+			ALL_TIME_STATS[0] = parseInt(allTimeStats[0]);
+			ALL_TIME_STATS[1] = parseInt(allTimeStats[1]);
+		}else{
+			Cookies.set('AllTimeStatsData', ALL_TIME_STATS);
 		}
 
 		var ctx = document.getElementById('canvas').getContext('2d');
@@ -185,6 +195,19 @@ class ChartHandler {
 		return true;
 	}
 
+	setCookies(plus, minus){
+		let currentCookie = Cookies.getJSON('AllTimeStatsData');
+		if(currentCookie != undefined){
+			ALL_TIME_STATS[0] = parseInt(currentCookie[0]) + parseInt(plus);
+			ALL_TIME_STATS[1] = parseInt(currentCookie[1]) + parseInt(minus);
+		}else{
+			ALL_TIME_STATS[0] = parseInt(plus);
+			ALL_TIME_STATS[1] = parseInt(minus);
+		}
+		DEBUG_LOG('Storing AllTimeStats data set: ' + ALL_TIME_STATS);
+		Cookies.set('AllTimeStatsData', ALL_TIME_STATS);
+	}
+
 	addData(nrPlus, nrMinus, comment) {
 		console.log('[INFO] ##### Entering ChartHandler::addData #####');
 		DEBUG_LOG("User input, Plus: " + nrPlus + " Minus: " + nrMinus + " Comment: " + comment);
@@ -221,6 +244,11 @@ class ChartHandler {
 			chartData.datasets[PLUS_DATASET].data.pop();
 			chartData.datasets[MINUS_DATASET].data.pop();
 			DAILY_COMMENTS.pop();
+			Cookies.set('AllTimeStatsData', ALL_TIME_STATS);
+		}else{
+			if(chartData.datasets[MINUS_DATASET].data.length > 0){
+				this.setCookies(chartData.datasets[PLUS_DATASET].data[chartData.datasets[PLUS_DATASET].data.length - 1], Math.abs(chartData.datasets[MINUS_DATASET].data[chartData.datasets[MINUS_DATASET].data.length - 1]));
+			}
 		}
 		
 		// Add new data
@@ -352,6 +380,19 @@ $(document).ready(function() {
 
 	document.getElementById('minusButton').addEventListener('click', function() {
 		addToMinusInput(1);
+	});
+
+	document.getElementById('allTimeStats').addEventListener('click', function() {
+		let allTimeStatsAndCurrentDay = [2];
+		if(DATA_DATES[DATA_DATES.length - 1] == new Date().toISOString().slice(0,10)){
+			allTimeStatsAndCurrentDay[0] = parseInt(ALL_TIME_STATS[0]) + parseInt(chartData.datasets[PLUS_DATASET].data[chartData.datasets[PLUS_DATASET].data.length - 1]);
+			allTimeStatsAndCurrentDay[1] = parseInt(ALL_TIME_STATS[1]) + Math.abs(parseInt(chartData.datasets[MINUS_DATASET].data[chartData.datasets[MINUS_DATASET].data.length - 1]));
+		}else{
+			allTimeStatsAndCurrentDay[0] = parseInt(ALL_TIME_STATS[0]);
+			allTimeStatsAndCurrentDay[1] = parseInt(ALL_TIME_STATS[1]);
+		}
+		Cookies.set('AllTimeStatsAndCurrentDayData', allTimeStatsAndCurrentDay);
+		window.open("all_time_stats.html", "_self");
 	});
 
 	document.getElementById('plusInput').readOnly = true;
