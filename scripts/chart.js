@@ -122,6 +122,8 @@ class ChartHandler {
 				tooltips: {
 					// mode: 'index',
 					// intersect: false,
+					bodyFontSize: 36,
+					titleFontSize: 18,
 			      	callbacks: {
 				        title: function(tooltipItem, data) {
 				          // console.log("You're hovering on index: " + tooltipItem[0]['index']);

@@ -43,29 +43,23 @@ class StatsHandler {
 			data: statsChartData,
 			options: {
 				title: {
-					display: false,
-					text: 'Daily Status'
+					display: true,
+					fontSize: 72,
+					text: 'All-time Stats'
 				},
 				legend: {
 					display: false,
 				},
 				tooltips: {
-					// mode: 'index',
-					// intersect: false,
+					bodyFontSize: 36,
 			      	callbacks: {
 				        title: function(tooltipItem, data) {
-				          // console.log("You're hovering on index: " + tooltipItem[0]['index']);
-				          return "All-time stats";// + data['labels'][tooltipItem[0]['index']];
 				        },
 				        label: function(tooltipItem, data) {
-				          // return data['datasets'][0]['data'][tooltipItem['index']];
-				          let index = tooltipItem['index'];
-				          return;
+				            let index = tooltipItem.index;
+				            return data.datasets[0].data[index] || '';
 				        },
 				        afterLabel: function(tooltipItem, data) {
-				          // var dataset = data['datasets'][0];
-				          // var percent = Math.round((dataset['data'][tooltipItem['index']] / dataset["_meta"][0]['total']) * 100)
-				          // return '(' + percent + '%)';
 				        }
 		      		}
 				},
@@ -75,7 +69,7 @@ class StatsHandler {
 					xAxes: [{
 						stacked: true,
 						ticks: {
-							fontSize: 15,
+							fontSize: 36,
            				}
 					}],
 					yAxes: [{
