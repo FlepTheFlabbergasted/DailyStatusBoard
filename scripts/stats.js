@@ -77,7 +77,6 @@ class StatsHandler {
 						ticks: {
 							fontSize: 25,
 							// TODO: Using const vars since I can't figure out how to access these options
-							stepSize: 1,
 							beginAtZero: true,
 							suggestedMax: Y_AXES_TICKS_SUGGESTED_ALL_TIME_MAX,
            				}
