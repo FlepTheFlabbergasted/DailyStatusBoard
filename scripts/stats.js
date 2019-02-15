@@ -78,6 +78,7 @@ class StatsHandler {
 							fontSize: 25,
 							// TODO: Using const vars since I can't figure out how to access these options
 							beginAtZero: true,
+							precision: 0,
 							suggestedMax: Y_AXES_TICKS_SUGGESTED_ALL_TIME_MAX,
            				}
 					}]

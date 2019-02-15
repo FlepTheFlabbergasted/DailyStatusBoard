@@ -13,9 +13,9 @@ font-family: 'Raleway', sans-serif;
 html, body {
 	width: 100%;
 	height: 100%;
-	padding: 0.8%;
+	padding: 0.4%;
 	margin: 0;
-	font-size: 18px;
+	font-size: 32px;
 	line-height: 1.6em;
 	color: #3A4145;
 	font-family: 'Fira Sans', sans-serif;
@@ -30,7 +30,7 @@ html, body {
 #chartContainer {
 	display: inline-block;
 	float: left;
-	width: 49vw;
+	width: 60vw;
 	height: 95%; /* 100% and you can't see the underneath controls for the chart */
 }
 
@@ -52,7 +52,7 @@ html, body {
    * flex-direction: row;
    * flex-wrap: wrap;
    */
-  -webkit-flex-flow: row wrap;
+  -webkit-flex-flow: row;
   /* Then we define how is distributed the remaining space */
   justify-content: center;
 }
@@ -66,7 +66,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 input {
 	/* Top Right Bottom Left */
-	margin: 0 0 0 0.5%;
+	margin: 0 0 0 0%;
 	text-align: center;
 	text-decoration: none;
 	font-size: 1.2em;
@@ -78,19 +78,12 @@ input {
 	max-width: 5%;
 }
 
-#dailyComment {
-	width: 60%;
-	height: 3vw;
-	margin-top: 1%;
-}
-
 button {
 	/* TopBottom RightLeft */
-	margin: 0 0.5%;
+	margin: 0 1% 0 0;
 	background: rgb(255, 165, 0); /* Orange */
 	border: none;
 	color: white;
-	padding: 0.8% 1.5%;
 	text-align: center;
 	text-decoration: none;
 	font-size: 1.2em;
@@ -103,8 +96,7 @@ button:hover{
 
 #plusButton {
 	background: rgb(34, 175, 34); /* Green */
-	/* Top Right Bottom Left */
-	margin: 0 0.5% 0 0;
+	width: 3vw;
 }
 
 #plusButton:hover{
@@ -113,8 +105,7 @@ button:hover{
 
 #minusButton {
 	background: rgb(220, 20, 60); /* Red */
-	/* Top Right Bottom Left */
-	margin: 0 0.5% 0 0;
+	width: 3vw;
 }
 
 #minusButton:hover {
