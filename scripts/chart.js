@@ -518,7 +518,12 @@ $(document).ready(function() {
 	 */
 	function doc_keyUp(e) {
 		// Do not allow editing if in the wrong view
-		if(document.getElementById("canvas").style.display != "none"){
+		checkForCode(e.keyCode);
+		let activeElement = document.activeElement.tagName.toLowerCase();
+		if(activeElement === "textarea"){
+			return;
+		}
+		if(document.getElementById("canvas").style.display !== "none"){
 			switch(e.keyCode) {
 				case 87/*w*/:
 					if(e.shiftKey){
@@ -548,7 +553,6 @@ $(document).ready(function() {
 		if(e.keyCode == 82/*r*/){
 			toggleView();
 		}
-		checkForCode(e.keyCode);
 	}
 
 	function checkForCode(input){
