@@ -31,7 +31,7 @@ html, body {
 	display: inline-block;
 	float: left;
 	width: 60vw;
-	height: 95%; /* 100% and you can't see the underneath controls for the chart */
+	height: 96%; /* 100% and you can't see the underneath controls for the chart */
 }
 
 .flex-container {

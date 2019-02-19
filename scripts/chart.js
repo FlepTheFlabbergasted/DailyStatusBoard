@@ -408,6 +408,14 @@ $(document).ready(function() {
 	document.getElementById('plusInput').readOnly = true;
 	document.getElementById('minusInput').readOnly = true;
 	document.getElementById("statsCanvas").style.display = "none";
+	document.getElementById('filipText').value = 'Filip:\n';
+	document.getElementById('jorgenText').value = 'Jörgen:\n';
+	document.getElementById('jakobText').value = 'Jakob:\n';
+	document.getElementById('mattiasText').value = 'Mattias:\n';
+	document.getElementById('mickeText').value = 'Mikael:\n';
+	document.getElementById('simonText').value = 'Simon:\n';
+	document.getElementById('figaroText').value = 'Figaro:\n';
+	document.getElementById('niklasText').value = 'Niklas:\n';
 
 	function toggleView(){
 		// Update the statsHandler today's data
