@@ -279,6 +279,15 @@ class ChartHandler {
 	}
 } // class ChartHandler
 
+function setPostitTextAreas(postitId, defaultText){
+	let cookie = Cookies.get(postitId);
+	if(cookie != undefined){
+		document.getElementById(postitId).value = cookie;
+	}else{
+		document.getElementById(postitId).value = defaultText;
+	}
+}
+
 window.onload = function() {
 	// Create new ChartHandler to control the chart, all further operations will be 
 	// called using 'window.chartHandler'
@@ -290,7 +299,26 @@ window.onload = function() {
 		window.statsHandler = new StatsHandler(0, 0);
 	}
 	window.chartHandler = new ChartHandler();
+	setPostitTextAreas("filipText", "Filip");
+	setPostitTextAreas("jorgenText", "Jörgen");
+	setPostitTextAreas("jakobText", "Jakob");
+	setPostitTextAreas("mattiasText", "Mattias");
+	setPostitTextAreas("mickeText", "Mikael");
+	setPostitTextAreas("simonText", "Simon");
+	setPostitTextAreas("figaroText", "Figaro");
+	setPostitTextAreas("niklasText", "Niklas");
 }; // window.onload
+
+window.onbeforeunload = function(){
+   Cookies.set('filipText', document.getElementById("filipText").value);
+   Cookies.set('jorgenText', document.getElementById("jorgenText").value);
+   Cookies.set('jakobText', document.getElementById("jakobText").value);
+   Cookies.set('mattiasText', document.getElementById("mattiasText").value);
+   Cookies.set('mickeText', document.getElementById("mickeText").value);
+   Cookies.set('simonText', document.getElementById("simonText").value);
+   Cookies.set('figaroText', document.getElementById("figaroText").value);
+   Cookies.set('niklasText', document.getElementById("niklasText").value);
+}
 
 $(document).ready(function() {
 
