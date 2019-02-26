@@ -292,15 +292,36 @@ function setPostitTextAreas(postitId, defaultText){
 	}
 }
 
-function addPostit(postit){
+function addPostit(postitId, textAreaId, initalText, posLeft, posTop){
 	let postitDiv = $('<div class="postit" draggable="true" ondragstart="drag_start(event)" id=' + 
-	postit[0] + 
-	'><textarea id=' + postit[1] +
-	'>' + postit[2] + '</textarea>');
-	
+	postitId + 
+	'><textarea id=' + textAreaId +
+	'>' + initalText + '</textarea></div>');
 	let deleteButton = $('<button id="removePostit">X</button>');
 	deleteButton.appendTo(postitDiv);
 	postitDiv.appendTo(document.getElementById('postitContainer'));
+	postitDiv.appendTo(document.getElementById('postitContainer'));
+	if(parseInt(posLeft) !== -1 || parseInt(posTop) !== -1){
+		var d = document.getElementById(postitId);
+		d.style.position = "absolute";
+		d.style.left = posLeft+'px';
+		d.style.top = posTop+'px';
+	}
+}
+
+function findFreePostitIndex(){
+    for (var i = 0; i < POSTITS.length; i++) {
+        if(POSTITS[i] == false){
+			return i;
+		}
+    }
+	return false;
+}
+
+function resetPostitIndexAllocation(){
+	for(var i = 0; i < MAX_NR_OF_POSTITS; i++){
+		POSTITS[i] = false;
+	}
 }
 
 window.onload = function() {
@@ -314,36 +335,28 @@ window.onload = function() {
 		window.statsHandler = new StatsHandler(0, 0);
 	}
 	
+	resetPostitIndexAllocation();
+	
 	let postits = Cookies.getJSON('postits');
 	if(postits != undefined){
 		nrOfPostits = postits.length;
 		for (let i = 0; i < nrOfPostits; i++) {
-			POSTITS[i] = postits[i];
-			addPostit(postits[i]);
-			//Do something
+			postitIndex = postits[i][0][postits[i][0].length -1];
+			POSTITS[postitIndex] = true;
+			addPostit(postits[i][0], postits[i][1], postits[i][2], postits[i][3], postits[i][4]);
 		}
 	}
 	window.chartHandler = new ChartHandler();
-	/*setPostitTextAreas("filipText", "Filip");
-	setPostitTextAreas("jorgenText", "Jörgen");
-	setPostitTextAreas("jakobText", "Jakob");
-	setPostitTextAreas("mattiasText", "Mattias");
-	setPostitTextAreas("mickeText", "Mikael");
-	setPostitTextAreas("simonText", "Simon");
-	setPostitTextAreas("figaroText", "Figaro");
-	setPostitTextAreas("niklasText", "Niklas");*/
 }; // window.onload
 
 window.onbeforeunload = function(){
-	Cookies.set('postits', POSTITS);
-   /*Cookies.set('filipText', document.getElementById("filipText").value);
-   Cookies.set('jorgenText', document.getElementById("jorgenText").value);
-   Cookies.set('jakobText', document.getElementById("jakobText").value);
-   Cookies.set('mattiasText', document.getElementById("mattiasText").value);
-   Cookies.set('mickeText', document.getElementById("mickeText").value);
-   Cookies.set('simonText', document.getElementById("simonText").value);
-   Cookies.set('figaroText', document.getElementById("figaroText").value);
-   Cookies.set('niklasText', document.getElementById("niklasText").value);*/
+	let postits = [];
+	$('#postitContainer').children('div').each(function () {
+		var rect = this.getBoundingClientRect();
+		let postit = [this.id, this.children[0].id, this.children[0].value, rect.left, rect.top];
+		postits.push(postit);
+	});
+	Cookies.set('postits', postits);
 }
 
 $(document).ready(function() {
@@ -438,9 +451,9 @@ $(document).ready(function() {
 		if(nrOfPostits < MAX_NR_OF_POSTITS){
 			DEBUG_LOG('Adding postit...');
 			let initialText = prompt("Text", "Add Your Text Here");
-			let postit = ["postit" + nrOfPostits, "text" + nrOfPostits, initialText];
-			POSTITS[nrOfPostits] = postit;
-			addPostit("postit" + nrOfPostits, "text" + nrOfPostits, initialText);
+			postitIndex = findFreePostitIndex();
+			POSTITS[postitIndex] = true;
+			addPostit("postit" + postitIndex, "text" + postitIndex, initialText, -1, -1);
 			nrOfPostits++;
 		}else{
 			DEBUG_LOG('Max number of postits already added (' + MAX_NR_OF_POSTITS + ')');
@@ -476,14 +489,6 @@ $(document).ready(function() {
 	document.getElementById('plusInput').readOnly = true;
 	document.getElementById('minusInput').readOnly = true;
 	document.getElementById("statsCanvas").style.display = "none";
-	/*document.getElementById('filipText').value = 'Filip:\n';
-	document.getElementById('jorgenText').value = 'Jörgen:\n';
-	document.getElementById('jakobText').value = 'Jakob:\n';
-	document.getElementById('mattiasText').value = 'Mattias:\n';
-	document.getElementById('mickeText').value = 'Mikael:\n';
-	document.getElementById('simonText').value = 'Simon:\n';
-	document.getElementById('figaroText').value = 'Figaro:\n';
-	document.getElementById('niklasText').value = 'Niklas:\n';*/
 
 	function toggleView(){
 		// Update the statsHandler today's data
@@ -613,20 +618,10 @@ $(document).ready(function() {
 	$(document).on('click','#removePostit',function(){
 		let postit = this.parentNode;
 		postitIndex = postit.id[postit.id.length -1];
-		POSTITS.splice(postitIndex, 1);
+		POSTITS[postitIndex] = false;
 		nrOfPostits--;
 		this.parentNode.parentNode.removeChild(postit);
 	});
-	
-	function addPostit(postitId, textAreaId, initalText){
-		let postitDiv = $('<div class="postit" draggable="true" ondragstart="drag_start(event)" id=' + 
-		postitId + 
-		'><textarea id=' + textAreaId +
-		'>' + initalText + '</textarea></div>');
-		let deleteButton = $('<button id="removePostit">X</button>');
-		deleteButton.appendTo(postitDiv);
-		postitDiv.appendTo(document.getElementById('postitContainer'));
-	}
 
 	document.addEventListener('keyup', doc_keyUp, false);
 
