@@ -65,3 +65,23 @@
 	font-family: 'Roboto';
 	font-size: 1vw;
 }
+
+.postit button{
+    position:absolute;
+    top: 0;
+    right: 0.25vw;
+	width: 1vw;
+	height: 1vw;
+	background-color: Transparent;
+	border: none;
+	color: black;
+	text-align: center;
+	text-decoration: none;
+	font-size: 10px;
+	font-weight: bold;
+	background-repeat:no-repeat;
+    border: none;
+    cursor:pointer;
+    overflow: hidden;
+    outline:none;
+}

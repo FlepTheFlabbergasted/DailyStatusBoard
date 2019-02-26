@@ -293,10 +293,14 @@ function setPostitTextAreas(postitId, defaultText){
 }
 
 function addPostit(postit){
-	$('<div class="postit" draggable="true" ondragstart="drag_start(event)" id=' + 
+	let postitDiv = $('<div class="postit" draggable="true" ondragstart="drag_start(event)" id=' + 
 	postit[0] + 
 	'><textarea id=' + postit[1] +
-	'>' + postit[2] + '</textarea>').appendTo(document.getElementById('postitContainer'));
+	'>' + postit[2] + '</textarea>');
+	
+	let deleteButton = $('<button id="removePostit">X</button>');
+	deleteButton.appendTo(postitDiv);
+	postitDiv.appendTo(document.getElementById('postitContainer'));
 }
 
 window.onload = function() {
@@ -606,11 +610,22 @@ $(document).ready(function() {
 		}
 	}
 	
+	$(document).on('click','#removePostit',function(){
+		let postit = this.parentNode;
+		postitIndex = postit.id[postit.id.length -1];
+		POSTITS.splice(postitIndex, 1);
+		nrOfPostits--;
+		this.parentNode.parentNode.removeChild(postit);
+	});
+	
 	function addPostit(postitId, textAreaId, initalText){
-		$('<div class="postit" draggable="true" ondragstart="drag_start(event)" id=' + 
+		let postitDiv = $('<div class="postit" draggable="true" ondragstart="drag_start(event)" id=' + 
 		postitId + 
 		'><textarea id=' + textAreaId +
-		'>' + initalText + '</textarea>').appendTo(document.getElementById('postitContainer'));
+		'>' + initalText + '</textarea></div>');
+		let deleteButton = $('<button id="removePostit">X</button>');
+		deleteButton.appendTo(postitDiv);
+		postitDiv.appendTo(document.getElementById('postitContainer'));
 	}
 
 	document.addEventListener('keyup', doc_keyUp, false);
