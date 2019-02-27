@@ -37,7 +37,7 @@ class StatsHandler {
 		console.log('[INFO] ##### Entering StatsHandler::constructor #####');
 		statsChartData.datasets[0].data = [plus, minus];
 
-		var ctx = document.getElementById('statsCanvas').getContext('2d');
+		var ctx = document.getElementById('stats-canvas').getContext('2d');
 		this.chart = new Chart(ctx, {
 			type: 'bar',
 			data: statsChartData,

@@ -26,29 +26,35 @@
 	<audio id="secretSound" src="https://www.myinstants.com/media/sounds/zeldaitem.swf.mp3"></audio>
 </head>
 <body>
-	<div class="row">
-		<div id="chartContainer">
-			<canvas id="canvas"></canvas>
-			<canvas id="statsCanvas"></canvas>
-			<div id="flexContainer" class="flex-container">
-				<input type="number" class="width-5" id="plusInput" value="0"/>
-				<button id="plusButton">+</button>
-				<input type="number" class="width-5" id="minusInput" value="0"/>
-				<button id="minusButton">-</button>
-
+	<div id="main-container">
+		<div id="left-container">
+			<div id="chart-container">
+				<canvas id="canvas"></canvas>
+			</div>
+			<div id="stats-container">
+				<canvas id="stats-canvas"></canvas>
+			</div>
+			<div id="chart-controls">
+				<div id="input-container">
+					<div id="plus-container">
+						<input type="number" id="plusInput" value="0"/>
+						<button id="plusButton">+</button>
+					</div>
+					<div id="minus-container">
+						<input type="number" id="minusInput" value="0"/>
+						<button id="minusButton">-</button>
+					</div>
+				</div>
 				<button id="submitData">Submit Data</button>
-				<!-- <button id="addRandomData">Add Random Data</button> -->
 				<button id="removeData">Remove Data</button>
 				<button id="deleteStoredData">Delete Stored Data</button>
 				<button id="addPostit">Add Postit</button>
 			</div>
 		</div>
-
-		<div id="postitContainer" ondrop="drop(event)" ondragover="drag_over(event)">
+		<div id="right-container">
+			<div id="postit-container" ondrop="drop(event)" ondragover="drag_over(event)">
+			</div>
 		</div>
 	</div>
-	<!-- <button id="randomizeData">Randomize Data</button>
-	<button id="addDataset">Add Dataset</button>
-	<button id="removeDataset">Remove Dataset</button> -->
 </body>
 </html>

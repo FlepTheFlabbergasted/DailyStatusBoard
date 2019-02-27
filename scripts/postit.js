@@ -18,11 +18,11 @@ function getPostitHTML(postitId, textAreaId, initialText){
 }
 
 function addPostit(postitId, textAreaId, initialText){
-	$('#postitContainer').append(getPostitHTML(postitId, textAreaId, initialText));
+	$('#postit-container').append(getPostitHTML(postitId, textAreaId, initialText));
 }
 
 function addPostitWithPosition(postitId, textAreaId, initialText, posLeft, posTop){
-	$('#postitContainer').append(getPostitHTML(postitId, textAreaId, initialText));
+	$('#postit-container').append(getPostitHTML(postitId, textAreaId, initialText));
 
 	var d = document.getElementById(postitId);
 	d.style.position = "absolute";
@@ -63,9 +63,9 @@ function createPostitsFromCookies(){
 
 function setPostitCookies(){
 	let postits = [];
-	$('#postitContainer').children('div').each(function () {
+	$('#postit-container').children('div').each(function () {
 		var childPos = $(this).offset();
-		var parentPos = $('#postitContainer').offset();
+		var parentPos = $('#postit-container').offset();
 		var childOffset = {
 			top: childPos.top - parentPos.top,
 			left: childPos.left - parentPos.left

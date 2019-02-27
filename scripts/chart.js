@@ -407,20 +407,19 @@ $(document).ready(function() {
 
 	// Toggles view when clicking the two canvases
 	$(document).ready(function() {
-		$('#canvas').click(function() {
+		$('#chart-container').click(function() {
 			toggleView();
 		});
 	});
 
 	$(document).ready(function() {
-		$('#statsCanvas').click(function() {
+		$('#stats-container').click(function() {
 			toggleView();
 		});
 	});
 
 	document.getElementById('plusInput').readOnly = true;
 	document.getElementById('minusInput').readOnly = true;
-	document.getElementById("statsCanvas").style.display = "none";
 
 	function toggleView(){
 		// Update the statsHandler today's data
@@ -430,10 +429,10 @@ $(document).ready(function() {
 		}else{
 			window.statsHandler.setData(0, 0);
 		}
-		$('#statsCanvas').toggle('fast');
-		$('#canvas').toggle('fast');
-		$('#postitContainer').toggle('fast');
-		$('#flexContainer').toggle('fast');
+		$('#stats-container').toggle();
+		$('#chart-container').toggle();
+		$('#postit-container').toggle();
+		$('#chart-controls').toggle();
 	}
 
 	function submitData(){
