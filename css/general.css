@@ -40,6 +40,12 @@ html, body {
 	height: 100%;
 }
 
+#trashcan-container {
+	width: 100%;
+	background: gray;
+	height: 10%;
+}
+
 #chart-container{
 	width: 100%;
 	height: 85%;

@@ -16,11 +16,21 @@ function drop(event) {
 	return false;
 }
 
+function drop_trashcan(event) {
+	var offset = event.dataTransfer.getData("Text").split(',');
+	var dm = document.getElementById(offset[2]);
+	postitIndex = dm.id[dm.id.length -1];
+	AVAIL_POSTIT_INDEXES[postitIndex] = false;
+	NR_OF_POSTITS--;
+	dm.parentNode.removeChild(dm);
+	event.preventDefault();
+	return false;
+}
+
 function drag_over(event) {
 	event.preventDefault();
 	return false;
-}  
-
+}
 // TODO: Add eventlisteners to all stuff
 /*
 var dm = document.getElementById('dragme'); 

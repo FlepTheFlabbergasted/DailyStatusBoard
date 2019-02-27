@@ -12,8 +12,6 @@ function getPostitHTML(postitId, textAreaId, initialText){
 	postitId +
 	'><textarea id=' + textAreaId +
 	'>' + initialText + '</textarea></div>');
-	let deleteButton = $('<button id="removePostit">X</button>');
-	deleteButton.appendTo(postitDiv);
 	return postitDiv;
 }
 
@@ -89,12 +87,4 @@ function initializePostit(){
 		DEBUG_LOG('Max number of postits already added (' + MAX_NR_OF_POSTITS + ')');
 		alert("Max number of postits already added...");
 	}
-}
-
-function removePostitEventListener(){
-	let postit = this.parentNode;
-	postitIndex = postit.id[postit.id.length -1];
-	AVAIL_POSTIT_INDEXES[postitIndex] = false;
-	NR_OF_POSTITS--;
-	this.parentNode.parentNode.removeChild(postit);
 }
