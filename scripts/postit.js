@@ -52,9 +52,11 @@ function createPostitsFromCookies(){
 		for (let i = 0; i < NR_OF_POSTITS; i++) {
 			postitIndex = postits[i][POSTIT_ID][postits[i][POSTIT_ID].length -1];
 			AVAIL_POSTIT_INDEXES[postitIndex] = true;
-			addPostit(postits[i][POSTIT_ID],
+			addPostitWithPosition(postits[i][POSTIT_ID],
 									postits[i][POSTIT_TEXT_ID],
-									postits[i][POSTIT_TEXT]);
+									postits[i][POSTIT_TEXT],
+									postits[i][POSTIT_POS_LEFT],
+									postits[i][POSTIT_POS_TOP]);
 		}
 	}
 }
@@ -62,21 +64,27 @@ function createPostitsFromCookies(){
 function setPostitCookies(){
 	let postits = [];
 	$('#postitContainer').children('div').each(function () {
-		var rect = this.getBoundingClientRect();
-		let postit = [this.id, this.children[0].id, this.children[0].value, rect.left, rect.top];
+		var childPos = $(this).offset();
+		var parentPos = $('#postitContainer').offset();
+		var childOffset = {
+			top: childPos.top - parentPos.top,
+			left: childPos.left - parentPos.left
+		}
+		let postit = [this.id, this.children[0].id, this.children[0].value, childOffset.left, childOffset.top];
 		postits.push(postit);
 	});
 	Cookies.set('postits', postits);
 }
 
-function addPostitEventListener(){
+function initializePostit(){
 	if(NR_OF_POSTITS < MAX_NR_OF_POSTITS){
 		DEBUG_LOG('Adding postit...');
-		let initialText = prompt("Text", "Add Your Text Here");
+		let initialText = '';
 		postitIndex = allocatePostitIndex();
 		AVAIL_POSTIT_INDEXES[postitIndex] = true;
 		addPostit("postit" + postitIndex, "text" + postitIndex, initialText);
 		NR_OF_POSTITS++;
+		$('#text' + postitIndex).focus();
 	}else{
 		DEBUG_LOG('Max number of postits already added (' + MAX_NR_OF_POSTITS + ')');
 		alert("Max number of postits already added...");

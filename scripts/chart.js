@@ -296,9 +296,12 @@ window.onload = function() {
 	window.chartHandler = new ChartHandler();
 }; // window.onload
 
-window.onbeforeunload = function(){
-	setPostitCookies();
-}
+window.addEventListener("beforeunload", function (e) {
+  setPostitCookies();
+
+  //(e || window.event).returnValue = null;
+  return null;
+});
 
 $(document).ready(function() {
 
@@ -388,7 +391,7 @@ $(document).ready(function() {
 		}
 	});
 
-	document.getElementById('addPostit').addEventListener('click', addPostitEventListener);
+	document.getElementById('addPostit').addEventListener('click', initializePostit);
 
 	document.getElementById('submitData').addEventListener('click', function() {
 		submitData();
@@ -517,6 +520,9 @@ $(document).ready(function() {
 				case 13/*enter-key*/:
 				case 83/*s*/:
 					submitData();
+					break;
+				case 80/*p*/:
+					initializePostit();
 					break;
 				default:
 					break;
