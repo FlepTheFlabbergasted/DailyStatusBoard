@@ -46,6 +46,10 @@ html, body {
 	height: 10%;
 }
 
+#trashcan-container * {
+	pointer-events: none;
+}
+
 #chart-container{
 	width: 100%;
 	height: 85%;

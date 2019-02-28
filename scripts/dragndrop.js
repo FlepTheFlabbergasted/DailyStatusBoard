@@ -13,6 +13,7 @@ function drop(event) {
 	dm.style.left = (event.clientX + parseInt(offset[0],10)) + 'px';
 	dm.style.top = (event.clientY + parseInt(offset[1],10)) + 'px';
 	event.preventDefault();
+
 	return false;
 }
 
@@ -24,6 +25,7 @@ function drop_trashcan(event) {
 	NR_OF_POSTITS--;
 	dm.parentNode.removeChild(dm);
 	event.preventDefault();
+	event.target.style.border = "";
 	return false;
 }
 
@@ -31,6 +33,19 @@ function drag_over(event) {
 	event.preventDefault();
 	return false;
 }
+
+function drag_enter(event) {
+  	if(event.target.id == "trashcan-container") {
+		event.target.style.border = "3px dashed red";
+	}
+}
+
+function drag_leave(event) {
+	if(event.target.id == "trashcan-container") {
+		event.target.style.border = "";
+	}
+}
+
 // TODO: Add eventlisteners to all stuff
 /*
 var dm = document.getElementById('dragme'); 
