@@ -432,6 +432,7 @@ $(document).ready(function() {
 		$('#stats-container').toggle();
 		$('#chart-container').toggle();
 		$('#postit-container').toggle();
+		$('#trashcan-container').toggle();
 		$('#chart-controls').toggle();
 	}
 
@@ -548,8 +549,6 @@ $(document).ready(function() {
 			secretCodeIndex = 0;
 		}
 	}
-
-	$(document).on('click', '#removePostit', removePostitEventListener);
 
 	document.addEventListener('keyup', doc_keyUp, false);
 
