@@ -10,20 +10,27 @@ function drag_start(event) {
 function drop(event) {
 	var offset = event.dataTransfer.getData("Text").split(',');
 	var dm = document.getElementById(offset[2]);
-	dm.style.left = (event.clientX + parseInt(offset[0],10)) + 'px';
-	dm.style.top = (event.clientY + parseInt(offset[1],10)) + 'px';
-	event.preventDefault();
 
+	if(dm != null && dm.className == "postit") {
+		dm.style.left = (event.clientX + parseInt(offset[0],10)) + 'px';
+		dm.style.top = (event.clientY + parseInt(offset[1],10)) + 'px';
+	}
+
+	event.preventDefault();
 	return false;
 }
 
 function drop_trashcan(event) {
 	var offset = event.dataTransfer.getData("Text").split(',');
 	var dm = document.getElementById(offset[2]);
-	postitIndex = dm.id[dm.id.length -1];
-	AVAIL_POSTIT_INDEXES[postitIndex] = false;
-	NR_OF_POSTITS--;
-	dm.parentNode.removeChild(dm);
+
+	if(dm != null && dm.className == "postit") {
+		postitIndex = dm.id[dm.id.length -1];
+		AVAIL_POSTIT_INDEXES[postitIndex] = false;
+		NR_OF_POSTITS--;
+		dm.parentNode.removeChild(dm);
+	}
+
 	event.preventDefault();
 	event.target.style.border = "";
 	return false;
