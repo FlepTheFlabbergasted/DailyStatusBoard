@@ -24,11 +24,37 @@ function drop_trashcan(event) {
 	var offset = event.dataTransfer.getData("Text").split(',');
 	var dm = document.getElementById(offset[2]);
 
+	/* If it's a postit */
 	if(dm != null && dm.className == "postit") {
 		postitIndex = dm.id[dm.id.length -1];
 		AVAIL_POSTIT_INDEXES[postitIndex] = false;
 		NR_OF_POSTITS--;
 		dm.parentNode.removeChild(dm);
+
+
+		let trashcanContainer = document.getElementById("trashcan-container");
+		let trashcanImage = document.getElementById("trashcan-image");
+		let trashcanContainerPos = trashcanContainer.getBoundingClientRect();
+		let trashcanImagePos = trashcanImage.getBoundingClientRect();
+		let explosionGif = new Image();
+
+		explosionGif.onload = function() {
+			let offset = trashcanImagePos.left - trashcanContainerPos.left;
+
+			explosionGif.style.top = -this.height + 32 + "px"; // 32 is just eyeballing it so it looks nice in the trashcan
+			explosionGif.style.left = offset/2 - (this.width / 2) + trashcanImage.clientWidth/2 + "px";
+
+			setTimeout(function() {
+				// Theres a bug were the gif doesn't get "reset" and starts some frames in every second or third time
+				// https://stackoverflow.com/questions/10730212/proper-way-to-reset-a-gif-animation-with-displaynone-on-chrome
+				trashcanContainer.removeChild(explosionGif);
+			}, 690); // The gif is 0.7 sec long, remove it after completion (minus 5 cause' the image bugs out otherwise)
+		}
+
+		explosionGif.style.position = "absolute";
+		explosionGif.src = "assets/trashcan_explosion.gif";
+
+		trashcanContainer.append(explosionGif);
 	}
 
 	event.preventDefault();

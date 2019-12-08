@@ -41,13 +41,23 @@ html, body {
 }
 
 #trashcan-container {
-	width: 100%;
-	background: gray;
+	width: 15%;
 	height: 10%;
+
+	position: relative;
+
+	display: flex;
+	align-self: center;
+	justify-content: center;
 }
 
 #trashcan-container * {
 	pointer-events: none;
+}
+
+#trashcan-image {
+	object-fit: contain;
+	max-height: 100%;
 }
 
 #chart-container{
