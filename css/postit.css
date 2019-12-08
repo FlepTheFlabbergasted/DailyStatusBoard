@@ -10,7 +10,8 @@
 	display: inline-block;
 	padding: 1%;
 	border: 0.08vw solid #E8E8E8;
-	border-top: 1vw solid #fdfd86;
+	/* This line below makes the top part look like it got glue on it (little darker) */
+	/*border-top: 1vw solid #fdfd86;*/
 	/* Right bottom corner flap */
 	border-bottom-right-radius: 3vw 0.25vw;
 	/* Fancy color stuff */
@@ -34,6 +35,7 @@
 	height: 1.25vw;
 	background: rgba(0, 0, 0, 0.2);
 	/*        h-offset v-offset blur spread color */
+	/* The little flap in the bottom right */
 	box-shadow: 0.05vw 0.75vw 0.25vw rgba(0, 0, 0, 0.40); /* 2px 15px 5px rgba(0, 0, 0, 0.40); */
 	-moz-transform: matrix(-1, -0.1, 0, 1, 0, 0);
 	-webkit-transform: matrix(-1, -0.1, 0, 1, 0, 0);
