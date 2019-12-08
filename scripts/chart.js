@@ -338,58 +338,60 @@ $(document).ready(function() {
 		window.chartHandler.update();
 	}); // addRandomData*/
 
-	document.getElementById('removeData').addEventListener('click', function() {
-		if (chartData.labels.length > 0) {
-			// Remove last index of arrays
-			chartData.labels.pop();
-			chartData.datasets[PLUS_DATASET].data.pop();
-			chartData.datasets[MINUS_DATASET].data.pop();
+	// Should not be in the customer version
+	// document.getElementById('removeData').addEventListener('click', function() {
+	// 	if (chartData.labels.length > 0) {
+	// 		// Remove last index of arrays
+	// 		chartData.labels.pop();
+	// 		chartData.datasets[PLUS_DATASET].data.pop();
+	// 		chartData.datasets[MINUS_DATASET].data.pop();
 
-			DATA_DATES = Cookies.getJSON('Data Dates');
-			let labels = Cookies.getJSON('Labels');
-			let plusData = Cookies.getJSON('PlusData');
-			let minusData = Cookies.getJSON('MinusData');
-			DAILY_COMMENTS = Cookies.getJSON('Comments');
+	// 		DATA_DATES = Cookies.getJSON('Data Dates');
+	// 		let labels = Cookies.getJSON('Labels');
+	// 		let plusData = Cookies.getJSON('PlusData');
+	// 		let minusData = Cookies.getJSON('MinusData');
+	// 		DAILY_COMMENTS = Cookies.getJSON('Comments');
 
-			DATA_DATES.pop();
-			labels.pop();
-			let removedPlusData = plusData.pop();
-			let removedMinusData = Math.abs(minusData.pop());
-			DAILY_COMMENTS.pop();
+	// 		DATA_DATES.pop();
+	// 		labels.pop();
+	// 		let removedPlusData = plusData.pop();
+	// 		let removedMinusData = Math.abs(minusData.pop());
+	// 		DAILY_COMMENTS.pop();
 
-			Cookies.set('Data Dates', DATA_DATES);
-			Cookies.set('Labels', chartData.labels);
-			Cookies.set('PlusData', chartData.datasets[PLUS_DATASET].data);
-			Cookies.set('MinusData', chartData.datasets[MINUS_DATASET].data);
-			Cookies.set('Comments', DAILY_COMMENTS);
+	// 		Cookies.set('Data Dates', DATA_DATES);
+	// 		Cookies.set('Labels', chartData.labels);
+	// 		Cookies.set('PlusData', chartData.datasets[PLUS_DATASET].data);
+	// 		Cookies.set('MinusData', chartData.datasets[MINUS_DATASET].data);
+	// 		Cookies.set('Comments', DAILY_COMMENTS);
 
-			window.chartHandler.update();
-			window.chartHandler.setAllTimeStatsCookie(-removedPlusData, -removedMinusData);
+	// 		window.chartHandler.update();
+	// 		window.chartHandler.setAllTimeStatsCookie(-removedPlusData, -removedMinusData);
 
-			let allTimeStatsData = Cookies.getJSON('AllTimeStatsData');
-			if(allTimeStatsData != undefined){
-				window.statsHandler.setData(Cookies.getJSON('AllTimeStatsData')[PLUS_INDEX], Cookies.getJSON('AllTimeStatsData')[MINUS_INDEX]);
-			}
-		} else {
-			DEBUG_LOG('What data are ypu trying to remove???????');
-		}
-	});
+	// 		let allTimeStatsData = Cookies.getJSON('AllTimeStatsData');
+	// 		if(allTimeStatsData != undefined){
+	// 			window.statsHandler.setData(Cookies.getJSON('AllTimeStatsData')[PLUS_INDEX], Cookies.getJSON('AllTimeStatsData')[MINUS_INDEX]);
+	// 		}
+	// 	} else {
+	// 		DEBUG_LOG('What data are ypu trying to remove???????');
+	// 	}
+	// });
 
-	document.getElementById('deleteStoredData').addEventListener('click', function() {
-		if (confirm('Are you sure you want to remove previously saved data?')) {
-			DEBUG_LOG('Removing stored data (cookies)');
-			Cookies.remove('Data Dates');
-			Cookies.remove('Labels');
-			Cookies.remove('PlusData');
-			Cookies.remove('MinusData');
-			Cookies.remove('Comments');
-			Cookies.set('AllTimeStatsData', [0, 0]);
-			window.chartHandler.clear();
-			window.statsHandler.setData(0, 0);
-		} else {
-			// Do nothing!
-		}
-	});
+	// Should not be in the customer version
+	// document.getElementById('deleteStoredData').addEventListener('click', function() {
+	// 	if (confirm('Are you sure you want to remove previously saved data?')) {
+	// 		DEBUG_LOG('Removing stored data (cookies)');
+	// 		Cookies.remove('Data Dates');
+	// 		Cookies.remove('Labels');
+	// 		Cookies.remove('PlusData');
+	// 		Cookies.remove('MinusData');
+	// 		Cookies.remove('Comments');
+	// 		Cookies.set('AllTimeStatsData', [0, 0]);
+	// 		window.chartHandler.clear();
+	// 		window.statsHandler.setData(0, 0);
+	// 	} else {
+	// 		// Do nothing!
+	// 	}
+	// });
 
 	document.getElementById('addPostit').addEventListener('click', initializePostit);
 
