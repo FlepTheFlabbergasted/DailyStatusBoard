@@ -153,11 +153,18 @@ button {
 	color: white;
 	width: 20%;
 	height: 50%;
-	margin: 1%;
 	text-align: center;
 	text-decoration: none;
 	font-size: 2rem;
 	font-weight: bold;
+}
+
+#submitData {
+	margin: 1%;
+}
+
+#addPostit {
+	margin: 1%;
 }
 
 button:hover{
