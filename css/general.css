@@ -157,6 +157,7 @@ button {
 	text-decoration: none;
 	font-size: 2rem;
 	font-weight: bold;
+	cursor: pointer;
 }
 
 #submitData {
@@ -177,4 +178,14 @@ button:hover{
 
 #minusButton:hover {
 	background: rgb(175, 20, 60);
+}
+
+#helpButton {
+  position: absolute;
+  width: 60px;
+  height: 40px;
+  padding: 10px;
+  right: 0;
+  font-size: 1rem;
+  z-index: 999;
 }

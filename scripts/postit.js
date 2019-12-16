@@ -7,7 +7,7 @@ const POSTIT_TEXT = 2;
 const POSTIT_POS_LEFT = 3;
 const POSTIT_POS_TOP = 4;
 
-function getPostitHTML(postitId, textAreaId, initialText){
+function getPostitHTML(postitId, textAreaId, initialText) {
 	let postitDiv = $('<div class="postit" draggable="true" ondragstart="drag_start(event)" id=' +
 	postitId +
 	'><textarea id=' + textAreaId +
@@ -15,11 +15,11 @@ function getPostitHTML(postitId, textAreaId, initialText){
 	return postitDiv;
 }
 
-function addPostit(postitId, textAreaId, initialText){
+function addPostit(postitId, textAreaId, initialText) {
 	$('#postit-container').append(getPostitHTML(postitId, textAreaId, initialText));
 }
 
-function addPostitWithPosition(postitId, textAreaId, initialText, posLeft, posTop){
+function addPostitWithPosition(postitId, textAreaId, initialText, posLeft, posTop) {
 	$('#postit-container').append(getPostitHTML(postitId, textAreaId, initialText));
 
 	var d = document.getElementById(postitId);
@@ -28,7 +28,7 @@ function addPostitWithPosition(postitId, textAreaId, initialText, posLeft, posTo
 	d.style.top = posTop+'px';
 }
 
-function allocatePostitIndex(){
+function allocatePostitIndex() {
     for (var i = 0; i < AVAIL_POSTIT_INDEXES.length; i++) {
         if(AVAIL_POSTIT_INDEXES[i] == false){
 			return i;
@@ -37,15 +37,15 @@ function allocatePostitIndex(){
     return false;
 }
 
-function resetPostitIndexAllocation(){
-	for(var i = 0; i < MAX_NR_OF_POSTITS; i++){
+function resetPostitIndexAllocation() {
+	for(var i = 0; i < MAX_NR_OF_POSTITS; i++) {
 		AVAIL_POSTIT_INDEXES[i] = false;
 	}
 }
 
-function createPostitsFromCookies(){
+function createPostitsFromCookies() {
 	let postits = Cookies.getJSON('postits');
-	if(postits != undefined){
+	if(postits != undefined) {
 		NR_OF_POSTITS = postits.length;
 		for (let i = 0; i < NR_OF_POSTITS; i++) {
 			postitIndex = postits[i][POSTIT_ID][postits[i][POSTIT_ID].length -1];
@@ -59,7 +59,7 @@ function createPostitsFromCookies(){
 	}
 }
 
-function setPostitCookies(){
+function setPostitCookies() {
 	let postits = [];
 	$('#postit-container').children('div').each(function () {
 		var childPos = $(this).offset();
@@ -74,8 +74,8 @@ function setPostitCookies(){
 	Cookies.set('postits', postits);
 }
 
-function initializePostit(){
-	if(NR_OF_POSTITS < MAX_NR_OF_POSTITS){
+function initializePostit() {
+	if(NR_OF_POSTITS < MAX_NR_OF_POSTITS) {
 		DEBUG_LOG('Adding postit...');
 		let initialText = '';
 		postitIndex = allocatePostitIndex();
@@ -83,7 +83,30 @@ function initializePostit(){
 		addPostit("postit" + postitIndex, "text" + postitIndex, initialText);
 		NR_OF_POSTITS++;
 		$('#text' + postitIndex).focus();
-	}else{
+	} else {
+		DEBUG_LOG('Max number of postits already added (' + MAX_NR_OF_POSTITS + ')');
+		alert("Max number of postits already added...");
+	}
+}
+
+/**
+ * Add a normal postit (just like initializePostit()) but with predetermined text.
+ * The postit should inform the user about the keys for shortcommands
+ */
+function addHelpPostit() {
+	let helpText = "To increase/decrease plus:\n'e' and 'shift+e'\n\n" +
+		"To increase/decrease minus:\n'w' and 'shift+w'\n\n" +
+		"To submit data: 's'\n\n" +
+		"To see all time stats:\n'r' or left click on on chart";
+
+	if(NR_OF_POSTITS < MAX_NR_OF_POSTITS) {
+		DEBUG_LOG('Adding help postit');
+		postitIndex = allocatePostitIndex();
+		AVAIL_POSTIT_INDEXES[postitIndex] = true;
+		addPostit("postit" + postitIndex, "text" + postitIndex, helpText);
+		NR_OF_POSTITS++;
+		$('#text' + postitIndex).focus();
+	} else {
 		DEBUG_LOG('Max number of postits already added (' + MAX_NR_OF_POSTITS + ')');
 		alert("Max number of postits already added...");
 	}

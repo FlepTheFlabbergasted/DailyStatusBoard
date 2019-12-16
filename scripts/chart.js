@@ -407,6 +407,10 @@ $(document).ready(function() {
 		addToMinusInput(1);
 	});
 
+	document.getElementById('helpButton').addEventListener('click', function() {
+		addHelpPostit();
+	});
+
 	// Toggles view when clicking the two canvases
 	$(document).ready(function() {
 		$('#chart-container').click(function() {
@@ -494,6 +498,8 @@ $(document).ready(function() {
 	/* Handler for shortcuts, currently 'w' and 'shift+w'
 	 * to increase/decrease plusInput, 'e' and 'shift+e'
 	 * to increase/decrease minusInput, and 's' to submitData.
+	 *
+	 * To see all time stats, 'r' or left click on chart
 	 */
 	function doc_keyUp(e) {
 		// Do not allow editing if in the wrong view
