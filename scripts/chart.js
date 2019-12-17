@@ -1,14 +1,9 @@
 
-// https://www.chartjs.org/samples/latest/charts/bar/stacked.html
-
-// Take user input for histogram and append to array/list
-// Data consists of number of + and - as well as date 
-	// Update graphically when pressing +/- ?
-
-// When user presses "commit" update the histogram with added data
-// Save the array with data to file/in Chrome
-
-// Add post it notes...
+/* Chart Code used:
+ *
+ * https://www.chartjs.org/
+ * https://www.chartjs.org/samples/latest/charts/bar/stacked.html
+ */
 
 // TODO: Remove, initially used when debugging without user input
 function random(){
