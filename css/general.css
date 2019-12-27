@@ -6,6 +6,12 @@ font-family: 'Fira Sans', sans-serif;
 font-family: 'Raleway', sans-serif;
 */
 
+.deprecated {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+}
+
 *, *:before, *:after {
 	box-sizing: border-box;
 }
